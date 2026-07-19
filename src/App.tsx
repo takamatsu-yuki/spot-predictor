@@ -162,7 +162,7 @@ function App() {
 
   return (
     <>
-      <h1>Spot Predictor</h1>
+      <h1>MHNow Spot Predictor</h1>
 
       <div>
         <label>スポット数:</label>
