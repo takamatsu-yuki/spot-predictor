@@ -58,6 +58,7 @@ type Props = {
    * 親(App.tsx)へ通知する関数
    */
   onCellClick: (time: string, spotIndex: number) => void;
+  onSpotNameChange: (index: number, name: string) => void;
 };
 
 /**
@@ -71,6 +72,7 @@ export default function ScheduleTable({
   spotCount,
   spotNames,
   onCellClick,
+  onSpotNameChange,
 }: Props) {
   return (
     <table className="schedule-table">
@@ -104,7 +106,18 @@ export default function ScheduleTable({
             に近い。
           */}
           {Array.from({ length: spotCount }).map((_, i) => (
-            <th key={i}>{spotNames[i]}</th>
+            <th key={i}>
+              <input
+                type="text"
+                value={spotNames[i]}
+                onChange={(e) => onSpotNameChange(i, e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </th>
           ))}
         </tr>
       </thead>

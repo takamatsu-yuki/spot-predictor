@@ -37,6 +37,7 @@ import { saveData, loadData } from "./utils/storage";
 
 import type { InputData } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
+import SpotSetting from "./components/SpotSetting";
 
 function App() {
   // Spot総数
@@ -153,6 +154,12 @@ function App() {
     ]);
   }
 
+  function handleSpotNameChange(index: number, name: string) {
+    setSpotNames((oldNames) =>
+      oldNames.map((oldName, i) => (i === index ? name : oldName)),
+    );
+  }
+
   return (
     <>
       <h1>Spot Predictor</h1>
@@ -191,7 +198,13 @@ function App() {
         rows={table}
         spotCount={spotCount}
         spotNames={spotNames}
+        onSpotNameChange={handleSpotNameChange}
         onCellClick={handleCellClick}
+      />
+
+      <SpotSetting
+        spotNames={spotNames}
+        onSpotNameChange={handleSpotNameChange}
       />
     </>
   );
