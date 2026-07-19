@@ -36,6 +36,7 @@ import { buildSchedule } from "./utils/scheduleBuilder";
 import { saveData, loadData } from "./utils/storage";
 
 import type { InputData } from "./types";
+import { resizeSpotNames } from "./utils/spotNames";
 
 function App() {
   // Spot総数
@@ -84,9 +85,7 @@ function App() {
     if (data) {
       setSpotCount(data.spotCount);
 
-      setSpotNames(
-        data.spotNames ?? ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"]
-      );
+      setSpotNames(resizeSpotNames(data.spotNames ?? [], data.spotCount));
 
       setInputs(data.inputs);
     }
@@ -113,7 +112,7 @@ function App() {
       spotNames,
       inputs,
     });
-  }, [loaded, spotCount, inputs]);
+  }, [loaded, spotCount, spotNames, inputs]);
 
   /**
    * 表示用スケジュールを作成。
@@ -125,7 +124,7 @@ function App() {
   const table = buildSchedule(
     spotCount,
 
-    inputs
+    inputs,
   );
 
   /**
@@ -154,7 +153,6 @@ function App() {
     ]);
   }
 
-
   return (
     <>
       <h1>Spot Predictor</h1>
@@ -170,12 +168,9 @@ function App() {
             const value = Number(e.target.value);
 
             setSpotCount(value);
+            setSpotNames((old) => resizeSpotNames(old, value));
 
-            /*
-                Spot数変更時は
-                現在の観測データを
-                一度リセット。
-              */
+            // Spot数変更時は現在の観測データを一度リセット。
             setInputs([]);
           }}
         />
