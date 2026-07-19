@@ -1,0 +1,49 @@
+/**
+ * ScheduleTable用スタイル
+ *
+ * 表の見た目だけを担当。
+ * 計算ロジックには影響しない。
+ */
+
+
+ .schedule-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  
+  /*
+    th（ヘッダー）とtd（セル）の共通設定
+  */
+  .schedule-table th,
+  .schedule-table td {
+  
+    border: 1px solid #888;
+  
+    padding: 8px;
+  
+    text-align: center;
+  
+  }
+  
+  
+  /*
+    ヘッダー行
+  */
+  .schedule-table th {
+  
+    background-color: #eee;
+  
+  }
+  
+  
+  /*
+    アクティブセル
+  */
+  .active-cell {
+  
+    background-color: #90ee90;
+  
+    font-weight: bold;
+  
+  }
