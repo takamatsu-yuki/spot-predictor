@@ -89,6 +89,7 @@ function App() {
       setSpotCount(data.spotCount);
       setSpotNames(resizeSpotNames(data.spotNames ?? [], data.spotCount));
       setInputs(data.inputs);
+      setJoinedTime(data.joinedTime ?? null);
       setIs24Hour(data.is24Hour ?? false);
     }
 
@@ -113,9 +114,10 @@ function App() {
       spotCount,
       spotNames,
       inputs,
+      joinedTime,
       is24Hour,
     });
-  }, [loaded, spotCount, spotNames, inputs, is24Hour]);
+  }, [loaded, spotCount, spotNames, inputs, joinedTime, is24Hour]);
 
   useEffect(() => {
     const timer = setInterval(() => {

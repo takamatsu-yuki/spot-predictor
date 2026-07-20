@@ -24,5 +24,6 @@ export interface SaveData {
   // 観測データ
   inputs: InputData[];
 
+  joinedTime: string | null;
   is24Hour: boolean;
 }
