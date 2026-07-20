@@ -53,12 +53,13 @@ const END_TIME = "23:20";
 export function calculateSpotColumn(
   spotCount: number,
   baseTime: string,
+  is24Hour: boolean,
 ): string[] {
   const rows: string[] = [];
 
   const baseMinutes = timeToMinutes(baseTime);
 
-  const startMinutes = timeToMinutes(START_TIME);
+  const startMinutes = timeToMinutes(is24Hour ? "00:00" : START_TIME);
 
   const endMinutes = timeToMinutes(END_TIME);
 
@@ -109,10 +110,13 @@ export function calculateSpotColumn(
  *
  * @param spotCount スポット数
  */
-export function createEmptySchedule(spotCount: number): ScheduleRow[] {
+export function createEmptySchedule(
+  spotCount: number,
+  is24Hour: boolean,
+): ScheduleRow[] {
   const rows: ScheduleRow[] = [];
 
-  let current = timeToMinutes(START_TIME);
+  let current = timeToMinutes(is24Hour ? "00:00" : START_TIME);
 
   const end = timeToMinutes(END_TIME);
 

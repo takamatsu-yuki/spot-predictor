@@ -59,6 +59,7 @@ import type { InputData, ScheduleRow } from "../types";
 export function buildSchedule(
   spotCount: number,
   inputs: InputData[],
+  is24Hour: boolean,
 ): ScheduleRow[] {
   /**
    * まず空の表を作る。
@@ -66,7 +67,7 @@ export function buildSchedule(
    * 時刻だけ存在し、
    * 全Spotはfalse状態。
    */
-  let table = createEmptySchedule(spotCount);
+  let table = createEmptySchedule(spotCount, is24Hour);
 
   /**
    * 登録されているSpotを
@@ -82,7 +83,7 @@ export function buildSchedule(
      * このSpotが
      * アクティブになる時刻一覧。
      */
-    const activeTimes = calculateSpotColumn(spotCount, input.time);
+    const activeTimes = calculateSpotColumn(spotCount, input.time, is24Hour);
 
     /**
      * 表へ反映。

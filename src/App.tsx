@@ -45,6 +45,7 @@ function App() {
   const [loaded, setLoaded] = useState(false);
   const [now, setNow] = useState(new Date());
   const [joinedTime, setJoinedTime] = useState<string | null>(null);
+  const [is24Hour, setIs24Hour] = useState(false);
 
   /**
    * ユーザーが入力した観測情報。
@@ -86,10 +87,9 @@ function App() {
 
     if (data) {
       setSpotCount(data.spotCount);
-
       setSpotNames(resizeSpotNames(data.spotNames ?? [], data.spotCount));
-
       setInputs(data.inputs);
+      setIs24Hour(data.is24Hour ?? false);
     }
 
     /*
@@ -113,8 +113,9 @@ function App() {
       spotCount,
       spotNames,
       inputs,
+      is24Hour,
     });
-  }, [loaded, spotCount, spotNames, inputs]);
+  }, [loaded, spotCount, spotNames, inputs, is24Hour]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -131,11 +132,7 @@ function App() {
    * scheduleBuilder.ts
    * 側で行う。
    */
-  const table = buildSchedule(
-    spotCount,
-
-    inputs,
-  );
+  const table = buildSchedule(spotCount, inputs, is24Hour);
 
   /**
    * 表セルクリック時。
@@ -192,7 +189,6 @@ function App() {
   return (
     <>
       <h1>MHNow Spot Predictor</h1>
-
       <div>
         <label>スポット数:</label>
 
@@ -211,8 +207,15 @@ function App() {
           }}
         />
       </div>
+      <label>
+        <input
+          type="checkbox"
+          checked={is24Hour}
+          onChange={(e) => setIs24Hour(e.target.checked)}
+        />
+        24時間開催イベント中
+      </label>
       <button onClick={handleResetAll}>全スポット入力リセット</button>
-
       <ScheduleTable
         rows={table}
         spotCount={spotCount}
@@ -224,7 +227,6 @@ function App() {
         joinedTime={joinedTime}
         onJoinTime={handleJoinTime}
       />
-
       <SpotSetting
         spotNames={spotNames}
         onSpotNameChange={handleSpotNameChange}

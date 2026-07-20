@@ -1,5 +1,7 @@
 export type ScheduleRow = {
+  // 行の時刻
   time: string;
+  // Spot状態
   spots: boolean[];
 };
 
@@ -12,15 +14,6 @@ export interface InputData {
   time: string;
 }
 
-// 保存データ
-export interface SaveData {
-  // Spot総数
-  spotCount: number;
-
-  // 観測一覧
-  inputs: InputData[];
-}
-
 export interface SaveData {
   // Spot総数
   spotCount: number;
@@ -30,4 +23,6 @@ export interface SaveData {
 
   // 観測データ
   inputs: InputData[];
+
+  is24Hour: boolean;
 }
