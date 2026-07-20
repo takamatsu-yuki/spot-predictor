@@ -15,23 +15,20 @@
   */
 .schedule-table th,
 .schedule-table td {
-  border: 1px solid #888;
+  border: 1px solid var(--border);
 
   padding: 8px;
 
   text-align: center;
 }
 
-/*
-    ヘッダー行
-  */
+/* ヘッダー行 */
 .schedule-table th {
-  background-color: #eee;
+  background-color: var(--code-bg);
+  color: var(--text-h);
 }
 
-/*
-    アクティブセル
-  */
+/* アクティブセル */
 .active-cell {
   background-color: #90ee90;
 
@@ -44,10 +41,11 @@
   text-align: center;
   border: none;
   background: transparent;
+  color: var(--text-h);
   font-weight: bold;
 }
 
 .schedule-table th input:focus {
   outline: 1px solid #4a90e2;
-  background: white;
+  background: var(--bg);
 }
