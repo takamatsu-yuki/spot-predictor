@@ -51,8 +51,10 @@
 }
 
 /* 現在時刻の行 */
-.current-row td:not(.active-cell) {
-  background-color: var(--accent-bg);
+.current-row td:first-child {
+  background-color: purple;
+  color: white;
+  font-weight: bold;
 }
 
 .join-target-cell {
