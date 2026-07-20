@@ -44,6 +44,7 @@ function App() {
   const [spotCount, setSpotCount] = useState(5);
   const [loaded, setLoaded] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [joinedTime, setJoinedTime] = useState<string | null>(null);
 
   /**
    * ユーザーが入力した観測情報。
@@ -184,6 +185,10 @@ function App() {
     setInputs([]);
   }
 
+  function handleJoinTime(time: string) {
+    setJoinedTime((old) => (old === time ? null : time));
+  }
+
   return (
     <>
       <h1>MHNow Spot Predictor</h1>
@@ -216,6 +221,8 @@ function App() {
         onSpotNameChange={handleSpotNameChange}
         onResetSpot={handleResetSpot}
         now={now}
+        joinedTime={joinedTime}
+        onJoinTime={handleJoinTime}
       />
 
       <SpotSetting

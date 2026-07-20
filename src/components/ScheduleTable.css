@@ -54,3 +54,7 @@
 .current-row td:not(.active-cell) {
   background-color: var(--accent-bg);
 }
+
+.join-target-cell {
+  box-shadow: inset 0 0 0 3px gold;
+}

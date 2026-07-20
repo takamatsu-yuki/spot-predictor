@@ -48,14 +48,13 @@ type Props = {
   spotCount: number;
   spotNames: string[];
   now: Date;
+  joinedTime: string | null;
 
-  /**
-   * セルをクリックした時に
-   * 親(App.tsx)へ通知する関数
-   */
+  // セルをクリックした時に親(App.tsx)へ通知する関数
   onCellClick: (time: string, spotIndex: number) => void;
   onSpotNameChange: (index: number, name: string) => void;
   onResetSpot: (spotIndex: number) => void;
+  onJoinTime: (time: string) => void;
 };
 
 /**
@@ -69,9 +68,11 @@ export default function ScheduleTable({
   spotCount,
   spotNames,
   now,
+  joinedTime,
   onCellClick,
   onSpotNameChange,
   onResetSpot,
+  onJoinTime,
 }: Props) {
   function isCurrentRow(time: string): boolean {
     const current = now.getHours() * 60 + now.getMinutes();
@@ -80,6 +81,18 @@ export default function ScheduleTable({
 
     return current >= row && current < row + 25;
   }
+
+  function isJoinTargetRow(time: string): boolean {
+    if (!joinedTime) {
+      return false;
+    }
+
+    const target = timeToMinutes(joinedTime) + 180;
+    const row = timeToMinutes(time);
+
+    return target >= row && target < row + 25;
+  }
+
   return (
     <table className="schedule-table">
       {/* 表のヘッダー部分 */}
@@ -146,7 +159,13 @@ export default function ScheduleTable({
         {rows.map((row, index) => (
           <tr
             key={`${row.time}-${index}`}
-            className={isCurrentRow(row.time) ? "current-row" : ""}
+            className={
+              isJoinTargetRow(row.time)
+                ? "join-target-row"
+                : isCurrentRow(row.time)
+                  ? "current-row"
+                  : ""
+            }
           >
             {/* 時刻表示 */}
             <td>{row.time}</td>
@@ -170,10 +189,21 @@ export default function ScheduleTable({
             {row.spots.map((active, i) => (
               <td
                 key={i}
-                className={active ? "active-cell" : ""}
+                className={
+                  active
+                    ? isJoinTargetRow(row.time)
+                      ? "active-cell join-target-cell"
+                      : "active-cell"
+                    : ""
+                }
                 onClick={() => onCellClick(row.time, i)}
+                onDoubleClick={() => {
+                  if (active) {
+                    onJoinTime(row.time);
+                  }
+                }}
               >
-                {active ? "●" : ""}
+                {active ? (joinedTime === row.time ? "★" : "●") : ""}
               </td>
             ))}
           </tr>
