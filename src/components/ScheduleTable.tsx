@@ -41,16 +41,10 @@ import "./ScheduleTable.css";
  * )
  */
 type Props = {
-  /**
-   * 表示するスケジュール
-   */
+  // 表示するスケジュール
   rows: ScheduleRow[];
-
-  /**
-   * スポット数
-   */
+  // スポット数
   spotCount: number;
-
   spotNames: string[];
 
   /**
@@ -59,6 +53,7 @@ type Props = {
    */
   onCellClick: (time: string, spotIndex: number) => void;
   onSpotNameChange: (index: number, name: string) => void;
+  onResetSpot: (spotIndex: number) => void;
 };
 
 /**
@@ -73,6 +68,7 @@ export default function ScheduleTable({
   spotNames,
   onCellClick,
   onSpotNameChange,
+  onResetSpot,
 }: Props) {
   return (
     <table className="schedule-table">
@@ -117,6 +113,8 @@ export default function ScheduleTable({
                   }
                 }}
               />
+
+              <button onClick={() => onResetSpot(i)}>×</button>
             </th>
           ))}
         </tr>

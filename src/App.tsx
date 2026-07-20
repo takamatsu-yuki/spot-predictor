@@ -160,6 +160,22 @@ function App() {
     );
   }
 
+  function handleResetSpot(spotIndex: number) {
+    const spotNumber = spotIndex + 1;
+
+    setInputs((oldInputs) =>
+      oldInputs.filter((input) => input.spot !== spotNumber),
+    );
+  }
+
+  function handleResetAll() {
+    if (!confirm("全スポットの観測データを削除しますか？")) {
+      return;
+    }
+
+    setInputs([]);
+  }
+
   return (
     <>
       <h1>MHNow Spot Predictor</h1>
@@ -182,24 +198,15 @@ function App() {
           }}
         />
       </div>
-
-      <div>
-        <p>入力済み:</p>
-
-        {inputs.map((input) => (
-          <span key={input.spot}>
-            Spot
-            {input.spot}:{input.time}{" "}
-          </span>
-        ))}
-      </div>
+      <button onClick={handleResetAll}>全スポット入力リセット</button>
 
       <ScheduleTable
         rows={table}
         spotCount={spotCount}
         spotNames={spotNames}
-        onSpotNameChange={handleSpotNameChange}
         onCellClick={handleCellClick}
+        onSpotNameChange={handleSpotNameChange}
+        onResetSpot={handleResetSpot}
       />
 
       <SpotSetting
