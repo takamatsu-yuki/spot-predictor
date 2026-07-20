@@ -58,7 +58,7 @@ import type { InputData, ScheduleRow } from "../types";
  */
 export function buildSchedule(
   spotCount: number,
-  inputs: InputData[]
+  inputs: InputData[],
 ): ScheduleRow[] {
   /**
    * まず空の表を作る。

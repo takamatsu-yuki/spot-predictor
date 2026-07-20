@@ -9,31 +9,23 @@
  * 1スポット分のアクティブ時刻を計算する。
  */
 
-import {
-  timeToMinutes,
-  minutesToTime
-} from "./time";
+import { timeToMinutes, minutesToTime } from "./time";
 import type { ScheduleRow } from "../types";
-
 
 /**
  * 1スポットのアクティブ時間
  */
 const ACTIVE_DURATION = 25;
 
-
 /**
  * ゲーム開始
  */
 const START_TIME = "06:15";
 
-
 /**
  * ゲーム終了
  */
 const END_TIME = "23:20";
-
-
 
 /**
  * 1つのスポットの時間一覧を作成する。
@@ -60,25 +52,15 @@ const END_TIME = "23:20";
  */
 export function calculateSpotColumn(
   spotCount: number,
-  baseTime: string
+  baseTime: string,
 ): string[] {
-
-
   const rows: string[] = [];
 
+  const baseMinutes = timeToMinutes(baseTime);
 
-  const baseMinutes =
-    timeToMinutes(baseTime);
+  const startMinutes = timeToMinutes(START_TIME);
 
-
-  const startMinutes =
-    timeToMinutes(START_TIME);
-
-
-  const endMinutes =
-    timeToMinutes(END_TIME);
-
-
+  const endMinutes = timeToMinutes(END_TIME);
 
   /*
     スポット単体なので、
@@ -88,61 +70,31 @@ export function calculateSpotColumn(
 
     で戻ってくる
   */
-  const cycle =
-    spotCount * ACTIVE_DURATION;
-
-
+  const cycle = spotCount * ACTIVE_DURATION;
 
   /*
     基準時刻から過去へ戻る
   */
-  let current =
-    baseMinutes;
+  let current = baseMinutes;
 
-
-  while (
-    current >= startMinutes
-  ) {
-
-    rows.push(
-      minutesToTime(current)
-    );
+  while (current >= startMinutes) {
+    rows.push(minutesToTime(current));
 
     current -= cycle;
-
   }
-
-
 
   /*
     基準時刻から未来へ進む
   */
-  current =
-    baseMinutes + cycle;
+  current = baseMinutes + cycle;
 
-
-
-  while (
-    current <= endMinutes
-  ) {
-
-    rows.push(
-      minutesToTime(current)
-    );
+  while (current <= endMinutes) {
+    rows.push(minutesToTime(current));
 
     current += cycle;
-
   }
 
-
-
-  return rows.sort(
-    (a,b)=>
-      timeToMinutes(a)
-      -
-      timeToMinutes(b)
-  );
-
+  return rows.sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
 }
 
 /**
@@ -157,51 +109,27 @@ export function calculateSpotColumn(
  *
  * @param spotCount スポット数
  */
-export function createEmptySchedule(
-  spotCount: number
-): ScheduleRow[] {
-
-
+export function createEmptySchedule(spotCount: number): ScheduleRow[] {
   const rows: ScheduleRow[] = [];
 
+  let current = timeToMinutes(START_TIME);
 
-  let current =
-    timeToMinutes(START_TIME);
+  const end = timeToMinutes(END_TIME);
 
-
-  const end =
-    timeToMinutes(END_TIME);
-
-
-
-  while (
-    current <= end
-  ) {
-
-
+  while (current <= end) {
     rows.push({
+      time: minutesToTime(current),
 
-      time:
-        minutesToTime(current),
-
-
-      spots:
-        Array.from(
-          {
-            length: spotCount
-          },
-          () => false
-        )
-
+      spots: Array.from(
+        {
+          length: spotCount,
+        },
+        () => false,
+      ),
     });
 
-
-
     current += ACTIVE_DURATION;
-
   }
 
-
   return rows;
-
 }
