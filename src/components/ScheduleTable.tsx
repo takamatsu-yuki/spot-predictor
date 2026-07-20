@@ -83,14 +83,33 @@ export default function ScheduleTable({
   }
 
   function isJoinTargetRow(time: string): boolean {
-    if (!joinedTime) {
-      return false;
-    }
+    const targets = getJoinTargetTimes();
 
-    const target = timeToMinutes(joinedTime) + 180;
     const row = timeToMinutes(time);
 
-    return target >= row && target < row + 25;
+    return targets.some((target) => {
+      return row <= target && target < row + 25;
+    });
+  }
+
+  function getJoinTargetTimes(): number[] {
+    if (!joinedTime) {
+      return [];
+    }
+
+    const targets: number[] = [];
+
+    let target = timeToMinutes(joinedTime) + 180;
+
+    const end = 24 * 60;
+
+    while (target <= end) {
+      targets.push(target);
+
+      target += 180;
+    }
+
+    return targets;
   }
 
   return (
