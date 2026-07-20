@@ -24,6 +24,7 @@
 import type { ScheduleRow } from "../types";
 
 import "./ScheduleTable.css";
+import { timeToMinutes } from "../utils/time";
 
 /**
  * ScheduleTableが受け取るデータ定義。
@@ -46,6 +47,7 @@ type Props = {
   // スポット数
   spotCount: number;
   spotNames: string[];
+  now: Date;
 
   /**
    * セルをクリックした時に
@@ -66,10 +68,18 @@ export default function ScheduleTable({
   rows,
   spotCount,
   spotNames,
+  now,
   onCellClick,
   onSpotNameChange,
   onResetSpot,
 }: Props) {
+  function isCurrentRow(time: string): boolean {
+    const current = now.getHours() * 60 + now.getMinutes();
+
+    const row = timeToMinutes(time);
+
+    return current >= row && current < row + 25;
+  }
   return (
     <table className="schedule-table">
       {/* 表のヘッダー部分 */}
@@ -134,7 +144,10 @@ export default function ScheduleTable({
 
         */}
         {rows.map((row, index) => (
-          <tr key={`${row.time}-${index}`}>
+          <tr
+            key={`${row.time}-${index}`}
+            className={isCurrentRow(row.time) ? "current-row" : ""}
+          >
             {/* 時刻表示 */}
             <td>{row.time}</td>
 

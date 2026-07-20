@@ -42,8 +42,8 @@ import SpotSetting from "./components/SpotSetting";
 function App() {
   // Spot総数
   const [spotCount, setSpotCount] = useState(5);
-
   const [loaded, setLoaded] = useState(false);
+  const [now, setNow] = useState(new Date());
 
   /**
    * ユーザーが入力した観測情報。
@@ -114,6 +114,14 @@ function App() {
       inputs,
     });
   }, [loaded, spotCount, spotNames, inputs]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   /**
    * 表示用スケジュールを作成。
@@ -207,6 +215,7 @@ function App() {
         onCellClick={handleCellClick}
         onSpotNameChange={handleSpotNameChange}
         onResetSpot={handleResetSpot}
+        now={now}
       />
 
       <SpotSetting

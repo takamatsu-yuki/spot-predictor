@@ -41,3 +41,9 @@ export function minutesToTime(minutes: number): string {
 
   return String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0");
 }
+
+export function getCurrentTimeMinutes(): number {
+  const now = new Date();
+
+  return now.getHours() * 60 + now.getMinutes();
+}

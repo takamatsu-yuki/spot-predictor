@@ -49,3 +49,8 @@
   outline: 1px solid #4a90e2;
   background: var(--bg);
 }
+
+/* 現在時刻の行 */
+.current-row td:not(.active-cell) {
+  background-color: var(--accent-bg);
+}
