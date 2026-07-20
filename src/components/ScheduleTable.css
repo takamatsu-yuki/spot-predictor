@@ -5,14 +5,7 @@
  * 計算ロジックには影響しない。
  */
 
-.schedule-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-/*
-    th（ヘッダー）とtd（セル）の共通設定
-  */
+/* th（ヘッダー）とtd（セル）の共通設定 */
 .schedule-table th,
 .schedule-table td {
   border: 1px solid var(--border);
@@ -22,19 +15,48 @@
   text-align: center;
 }
 
-/* ヘッダー行 */
+/* ヘッダー固定 */
+.schedule-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ヘッダー */
 .schedule-table th {
   background-color: var(--code-bg);
   color: var(--text-h);
 }
 
+/* 時刻列固定 */
+.schedule-table td:first-child,
+.schedule-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+/*
+  左上セル
+  ヘッダー固定 + 時刻列固定
+  の両方を満たす必要がある
+*/
+.schedule-table thead th:first-child {
+  z-index: 20;
+}
+
+/* 固定された時刻列の背景 */
+.schedule-table tbody td:first-child {
+  background-color: var(--bg);
+}
+
 /* アクティブセル */
 .active-cell {
   background-color: #90ee90;
-
   font-weight: bold;
 }
 
+/* Spot名入力欄 */
 .schedule-table th input {
   width: 100%;
   box-sizing: border-box;
@@ -50,13 +72,17 @@
   background: var(--bg);
 }
 
-/* 現在時刻の行 */
+/* 現在時刻、時刻セルだけ色変更 */
 .current-row td:first-child {
   background-color: purple;
   color: white;
   font-weight: bold;
 }
 
+/*
+  次回参加可能枠
+  セル全体を塗らず枠だけ表示
+*/
 .join-target-cell {
   box-shadow: inset 0 0 0 3px gold;
 }
