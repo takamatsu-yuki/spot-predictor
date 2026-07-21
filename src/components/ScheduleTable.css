@@ -5,30 +5,34 @@
  * 計算ロジックには影響しない。
  */
 
-/* th（ヘッダー）とtd（セル）の共通設定 */
+/* =========================
+   表共通
+========================= */
+
 .schedule-table th,
 .schedule-table td {
   border: 1px solid var(--border);
-
   padding: 8px;
-
   text-align: center;
 }
 
-/* ヘッダー固定 */
+/* =========================
+   ヘッダー固定
+========================= */
+
 .schedule-table thead th {
   position: sticky;
   top: 0;
   z-index: 10;
-}
 
-/* ヘッダー */
-.schedule-table th {
   background-color: var(--code-bg);
   color: var(--text-h);
 }
 
-/* 時刻列固定 */
+/* =========================
+   時刻列固定
+========================= */
+
 .schedule-table td:first-child,
 .schedule-table th:first-child {
   position: sticky;
@@ -39,24 +43,40 @@
 /*
   左上セル
   ヘッダー固定 + 時刻列固定
-  の両方を満たす必要がある
 */
 .schedule-table thead th:first-child {
   z-index: 20;
 }
 
-/* 固定された時刻列の背景 */
+/* 固定された時刻列の通常背景 */
 .schedule-table tbody td:first-child {
   background-color: var(--bg);
 }
 
-/* アクティブセル */
+/* =========================
+   現在時刻表示
+========================= */
+
+/* 現在時刻の時刻セルだけ紫 */
+.schedule-table tbody tr.current-row td:first-child {
+  background-color: purple;
+  color: white;
+  font-weight: bold;
+}
+
+/* =========================
+   アクティブセル
+========================= */
+
 .active-cell {
   background-color: #90ee90;
   font-weight: bold;
 }
 
-/* Spot名入力欄 */
+/* =========================
+   Spot名入力
+========================= */
+
 .schedule-table th input {
   width: 100%;
   box-sizing: border-box;
@@ -72,17 +92,10 @@
   background: var(--bg);
 }
 
-/* 現在時刻、時刻セルだけ色変更 */
-.current-row td:first-child {
-  background-color: purple;
-  color: white;
-  font-weight: bold;
-}
+/* =========================
+   次回参加可能枠
+========================= */
 
-/*
-  次回参加可能枠
-  セル全体を塗らず枠だけ表示
-*/
 .join-target-cell {
   box-shadow: inset 0 0 0 3px gold;
 }
