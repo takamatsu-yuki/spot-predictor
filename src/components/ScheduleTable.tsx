@@ -124,111 +124,109 @@ export default function ScheduleTable({
   }, []);
 
   return (
-    <div className="schedule-table-wrapper">
-      <table className="schedule-table">
-        {/* 表のヘッダー部分 */}
-        <thead>
-          {/* 1行目 */}
-          <tr>
-            <th rowSpan={2}>時刻</th>
+    <table className="schedule-table">
+      {/* 表のヘッダー部分 */}
+      <thead>
+        {/* 1行目 */}
+        <tr>
+          <th rowSpan={2}>時刻</th>
 
-            {groups.map((group, groupIndex) => (
+          {groups.map((group, groupIndex) => (
+            <th
+              key={group.id}
+              colSpan={group.spotCount}
+              className={groupIndex > 0 ? "group-start" : ""}
+            >
+              <input
+                type="text"
+                value={group.name}
+                aria-label="イベント名"
+                onChange={(e) => onGroupNameChange(group.id, e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </th>
+          ))}
+        </tr>
+
+        {/* 2行目 */}
+        <tr>
+          {groups.map((group, groupIndex) =>
+            group.spotNames.map((spotName, i) => (
               <th
-                key={group.id}
-                colSpan={group.spotCount}
-                className={groupIndex > 0 ? "group-start" : ""}
+                key={`${group.id}-${i}`}
+                className={groupIndex > 0 && i === 0 ? "group-start" : ""}
               >
                 <input
                   type="text"
-                  value={group.name}
-                  aria-label="イベント名"
-                  onChange={(e) => onGroupNameChange(group.id, e.target.value)}
+                  value={spotName}
+                  onChange={(e) =>
+                    onSpotNameChange(group.id, i, e.target.value)
+                  }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.currentTarget.blur();
                     }
                   }}
                 />
+
+                <button onClick={() => onResetSpot(group.id, i)}>×</button>
               </th>
-            ))}
-          </tr>
+            )),
+          )}
+        </tr>
+      </thead>
 
-          {/* 2行目 */}
-          <tr>
+      {/* 表の本体部分 */}
+      <tbody>
+        {groups[0]?.rows.map((row, index) => (
+          <tr
+            key={row.time}
+            ref={(el) => {
+              if (isCurrentRow(row.time)) {
+                currentRowRef.current = el;
+              }
+            }}
+            className={
+              isJoinTargetRow(row.time)
+                ? "join-target-row"
+                : isCurrentRow(row.time)
+                  ? "current-row"
+                  : ""
+            }
+          >
+            <td>{row.time}</td>
+
             {groups.map((group, groupIndex) =>
-              group.spotNames.map((spotName, i) => (
-                <th
+              group.rows[index].spots.map((active, i) => (
+                <td
                   key={`${group.id}-${i}`}
-                  className={groupIndex > 0 && i === 0 ? "group-start" : ""}
-                >
-                  <input
-                    type="text"
-                    value={spotName}
-                    onChange={(e) =>
-                      onSpotNameChange(group.id, i, e.target.value)
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.currentTarget.blur();
-                      }
-                    }}
-                  />
+                  className={[
+                    active
+                      ? isJoinTargetRow(row.time)
+                        ? "active-cell join-target-cell"
+                        : "active-cell"
+                      : "",
 
-                  <button onClick={() => onResetSpot(group.id, i)}>×</button>
-                </th>
+                    groupIndex > 0 && i === 0 ? "group-start" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={() => onCellClick(group.id, row.time, i)}
+                  onDoubleClick={() => {
+                    if (active) onJoinTime(row.time);
+                  }}
+                >
+                  {active ? (joinedTime === row.time ? "★" : "●") : ""}
+                </td>
               )),
             )}
           </tr>
-        </thead>
-
-        {/* 表の本体部分 */}
-        <tbody>
-          {groups[0]?.rows.map((row, index) => (
-            <tr
-              key={row.time}
-              ref={(el) => {
-                if (isCurrentRow(row.time)) {
-                  currentRowRef.current = el;
-                }
-              }}
-              className={
-                isJoinTargetRow(row.time)
-                  ? "join-target-row"
-                  : isCurrentRow(row.time)
-                    ? "current-row"
-                    : ""
-              }
-            >
-              <td>{row.time}</td>
-
-              {groups.map((group, groupIndex) =>
-                group.rows[index].spots.map((active, i) => (
-                  <td
-                    key={`${group.id}-${i}`}
-                    className={[
-                      active
-                        ? isJoinTargetRow(row.time)
-                          ? "active-cell join-target-cell"
-                          : "active-cell"
-                        : "",
-
-                      groupIndex > 0 && i === 0 ? "group-start" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    onClick={() => onCellClick(group.id, row.time, i)}
-                    onDoubleClick={() => {
-                      if (active) onJoinTime(row.time);
-                    }}
-                  >
-                    {active ? (joinedTime === row.time ? "★" : "●") : ""}
-                  </td>
-                )),
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }
