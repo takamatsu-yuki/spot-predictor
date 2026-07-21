@@ -20,31 +20,79 @@
    ヘッダー固定
 ========================= */
 
+.schedule-table {
+  /*
+    1行目ヘッダーの高さ。
+    2行目を固定する開始位置にも使う。
+    表示がずれる場合は、この44pxを調整する。
+  */
+  --first-header-row-height: 44px;
+}
+
+/*
+  ヘッダー全体の共通設定。
+  topは行ごとに別途指定する。
+*/
 .schedule-table thead th {
   position: sticky;
-  top: 0;
-  z-index: 10;
-
   background-color: var(--code-bg);
   color: var(--text-h);
+}
+
+/*
+  1行目: イベント名のヘッダー。
+  ブラウザ上端に固定する。
+*/
+.schedule-table thead tr:first-child th {
+  top: 0;
+  z-index: 15;
+  height: var(--first-header-row-height);
+  box-sizing: border-box;
+}
+
+/*
+  2行目: Spot名のヘッダー。
+  1行目の高さ分だけ下に固定する。
+*/
+.schedule-table thead tr:nth-child(2) th {
+  top: var(--first-header-row-height);
+  z-index: 14;
+}
+
+/*
+  左上の「時刻」セル。
+  縦スクロール・横スクロールの両方で
+  ほかのセルより手前に表示する。
+*/
+.schedule-table thead tr:first-child th:first-child {
+  left: 0;
+  z-index: 30;
 }
 
 /* =========================
    時刻列固定
 ========================= */
 
-.schedule-table td:first-child,
-.schedule-table th:first-child {
+/*
+  表本体の時刻列だけを左固定する。
+  td:first-child は各行の「時刻」セルだけに一致する。
+*/
+.schedule-table tbody td:first-child {
   position: sticky;
   left: 0;
   z-index: 5;
+  background-color: var(--bg);
 }
 
 /*
-  左上セル
-  ヘッダー固定 + 時刻列固定
+  左上の「時刻」ヘッダーだけを左固定する。
+
+  theadの1行目、最初のthだけを対象にする。
+  2行目のSpot1ヘッダーは対象にならない。
 */
-.schedule-table thead th:first-child {
+.schedule-table thead tr:first-child th:first-child {
+  position: sticky;
+  left: 0;
   z-index: 20;
 }
 
