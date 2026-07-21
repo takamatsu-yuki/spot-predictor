@@ -211,7 +211,7 @@ code {
 
 .group-spot-count input {
   /* 数値入力欄の横幅。大きくすると数字欄が広がる */
-  width: 4rem;
+  width: 2rem;
 
   /* 入力欄の内側余白。上下6px、左右8px */
   padding: 6px 8px;
