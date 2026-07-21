@@ -24,6 +24,7 @@
 import type { ScheduleRow } from "../types";
 
 import "./ScheduleTable.css";
+import { useEffect, useRef } from "react";
 import { timeToMinutes } from "../utils/time";
 
 /**
@@ -74,6 +75,8 @@ export default function ScheduleTable({
   onResetSpot,
   onJoinTime,
 }: Props) {
+  const currentRowRef = useRef<HTMLTableRowElement | null>(null);
+
   function isCurrentRow(time: string): boolean {
     const current = now.getHours() * 60 + now.getMinutes();
 
@@ -111,6 +114,19 @@ export default function ScheduleTable({
 
     return targets;
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (currentRowRef.current) {
+        const y = currentRowRef.current.offsetTop - 30;
+
+        window.scrollTo({
+          top: y,
+          behavior: "smooth",
+        });
+      }
+    }, 100);
+  }, []);
 
   return (
     <table className="schedule-table">
@@ -178,6 +194,12 @@ export default function ScheduleTable({
         {rows.map((row, index) => (
           <tr
             key={`${row.time}-${index}`}
+            ref={(el) => {
+              if (isCurrentRow(row.time)) {
+                console.log("scroll target:", row.time);
+                currentRowRef.current = el;
+              }
+            }}
             className={
               isJoinTargetRow(row.time)
                 ? "join-target-row"
