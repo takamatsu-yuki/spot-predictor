@@ -233,6 +233,7 @@ function App() {
         spotNames={spotNames}
         onSpotNameChange={handleSpotNameChange}
       />
+      <footer>ver 0.1.0</footer>
     </>
   );
 }
