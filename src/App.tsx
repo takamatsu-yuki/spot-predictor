@@ -57,6 +57,14 @@ function App() {
   // 現在時刻
   const [now, setNow] = useState(new Date());
 
+  /*
+    Spot数入力欄で、入力途中の文字列を保持する。
+    例: 「6」を入力する途中で、一時的に空欄にできる。
+  */
+  const [spotCountDrafts, setSpotCountDrafts] = useState<
+    Record<string, string>
+  >({});
+
   /**
    * 起動時に保存データを復元する。
    */
@@ -270,10 +278,53 @@ function App() {
               <input
                 type="number"
                 min="1"
-                value={group.spotCount}
-                onChange={(e) =>
-                  handleSpotCountChange(group.id, Number(e.target.value))
-                }
+                /*
+                  入力途中の文字列があればそれを表示する。
+                  なければ、確定済みのSpot数を表示する。
+                */
+                value={spotCountDrafts[group.id] ?? String(group.spotCount)}
+                /*
+                  入力中は、まだSpot数を確定しない。  
+                  そのため、一度すべて消して「6」と入力できる。
+                */
+                onChange={(e) => {
+                  setSpotCountDrafts((old) => ({
+                    ...old,
+                    [group.id]: e.target.value,
+                  }));
+                }}
+                /*
+                  入力欄からカーソルが外れた時点でSpot数を確定する。
+                  空欄・0・不正な値なら1に戻す。
+                */
+                onBlur={() => {
+                  const text =
+                    spotCountDrafts[group.id] ?? String(group.spotCount);
+                  const value = Number(text);
+
+                  handleSpotCountChange(
+                    group.id,
+                    Number.isInteger(value) && value >= 1 ? value : 1,
+                  );
+
+                  /*
+                    入力途中の文字列を削除し、
+                    確定したSpot数を再表示する。
+                  */
+                  setSpotCountDrafts((old) => {
+                    const next = { ...old };
+                    delete next[group.id];
+                    return next;
+                  });
+                }}
+                /*
+                  Enterキーでも入力を確定する。
+                */
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
               />
             </label>
 
