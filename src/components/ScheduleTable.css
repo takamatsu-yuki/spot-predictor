@@ -99,3 +99,9 @@
 .join-target-cell {
   box-shadow: inset 0 0 0 3px gold;
 }
+
+/* 2グループ目以降の左端に、グループ境界線を表示する */
+.schedule-table .group-start {
+  /* 線の太さ: 3px、線の色: 青 */
+  border-left: 3px solid #3b82f6;
+}

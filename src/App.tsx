@@ -28,56 +28,34 @@
  */
 
 import { useEffect, useState } from "react";
-
 import ScheduleTable from "./components/ScheduleTable";
-
 import { buildSchedule } from "./utils/scheduleBuilder";
-
 import { saveData, loadData } from "./utils/storage";
-
-import type { InputData } from "./types";
+import type { SpotGroup } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
-import SpotSetting from "./components/SpotSetting";
 
 function App() {
-  // Spot総数
-  const [spotCount, setSpotCount] = useState(5);
-  const [loaded, setLoaded] = useState(false);
-  const [now, setNow] = useState(new Date());
-  const [joinedTime, setJoinedTime] = useState<string | null>(null);
+  // イベントグループ一覧
+  const [groups, setGroups] = useState<SpotGroup[]>([
+    {
+      id: "default",
+      name: "イベント1",
+      spotCount: 5,
+      spotNames: ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"],
+      inputs: [],
+    },
+  ]);
+  // 全グループ共通設定
   const [is24Hour, setIs24Hour] = useState(false);
 
-  /**
-   * ユーザーが入力した観測情報。
-   *
-   * 例:
-   *
-   * [
-   *   {
-   *     spot:3,
-   *     time:"14:25"
-   *   }
-   * ]
-   */
-  const [inputs, setInputs] = useState<InputData[]>([]);
+  // 全グループ共通参加時刻
+  const [joinedTime, setJoinedTime] = useState<string | null>(null);
 
-  /**
-   * Spot表示名
-   *
-   * 例:
-   * [
-   *  "入口",
-   *  "中央",
-   *  "塔"
-   * ]
-   */
-  const [spotNames, setSpotNames] = useState<string[]>([
-    "Spot1",
-    "Spot2",
-    "Spot3",
-    "Spot4",
-    "Spot5",
-  ]);
+  // 保存復元完了
+  const [loaded, setLoaded] = useState(false);
+
+  // 現在時刻
+  const [now, setNow] = useState(new Date());
 
   /**
    * 起動時に保存データを復元する。
@@ -85,17 +63,16 @@ function App() {
   useEffect(() => {
     const data = loadData();
 
-    if (data) {
-      setSpotCount(data.spotCount);
-      setSpotNames(resizeSpotNames(data.spotNames ?? [], data.spotCount));
-      setInputs(data.inputs);
+    /*
+      新形式の保存データだけ復元する。
+      ver 0.10以前のデータは無視し、初期状態から始める。
+    */
+    if (data && Array.isArray(data.groups)) {
+      setGroups(data.groups);
       setJoinedTime(data.joinedTime ?? null);
       setIs24Hour(data.is24Hour ?? false);
     }
 
-    /*
-      読み込み完了を知らせる
-    */
     setLoaded(true);
   }, []);
 
@@ -111,13 +88,11 @@ function App() {
     }
 
     saveData({
-      spotCount,
-      spotNames,
-      inputs,
+      groups,
       joinedTime,
       is24Hour,
     });
-  }, [loaded, spotCount, spotNames, inputs, joinedTime, is24Hour]);
+  }, [loaded, groups, joinedTime, is24Hour]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -134,7 +109,10 @@ function App() {
    * scheduleBuilder.ts
    * 側で行う。
    */
-  const table = buildSchedule(spotCount, inputs, is24Hour);
+  const tables = groups.map((group) => ({
+    ...group,
+    rows: buildSchedule(group.spotCount, group.inputs, is24Hour),
+  }));
 
   /**
    * 表セルクリック時。
@@ -142,46 +120,131 @@ function App() {
    * 同じSpotが既に存在する場合、
    * 新しい入力を正とする。
    */
-  function handleCellClick(time: string, spotIndex: number) {
+  function handleCellClick(groupId: string, time: string, spotIndex: number) {
     const spotNumber = spotIndex + 1;
 
-    setInputs((oldInputs) => [
-      /*
-          同じSpotの古い情報を削除
-        */
-      ...oldInputs.filter((input) => input.spot !== spotNumber),
+    setGroups((oldGroups) =>
+      oldGroups.map((group) => {
+        if (group.id !== groupId) {
+          return group;
+        }
 
-      /*
-          新しい情報を追加
-        */
-      {
-        spot: spotNumber,
-
-        time,
-      },
-    ]);
-  }
-
-  function handleSpotNameChange(index: number, name: string) {
-    setSpotNames((oldNames) =>
-      oldNames.map((oldName, i) => (i === index ? name : oldName)),
+        return {
+          ...group,
+          inputs: [
+            ...group.inputs.filter((input) => input.spot !== spotNumber),
+            {
+              spot: spotNumber,
+              time,
+            },
+          ],
+        };
+      }),
     );
   }
 
-  function handleResetSpot(spotIndex: number) {
-    const spotNumber = spotIndex + 1;
+  function handleSpotNameChange(groupId: string, index: number, name: string) {
+    setGroups((oldGroups) =>
+      oldGroups.map((group) => {
+        if (group.id !== groupId) {
+          return group;
+        }
 
-    setInputs((oldInputs) =>
-      oldInputs.filter((input) => input.spot !== spotNumber),
+        return {
+          ...group,
+          spotNames: group.spotNames.map((oldName, i) =>
+            i === index ? name : oldName,
+          ),
+        };
+      }),
     );
   }
 
-  function handleResetAll() {
-    if (!confirm("全スポットの観測データを削除しますか？")) {
+  function handleResetSpot(groupId: string, spotIndex: number) {
+    const spotNumber = spotIndex + 1;
+
+    setGroups((oldGroups) =>
+      oldGroups.map((group) => {
+        if (group.id !== groupId) {
+          return group;
+        }
+
+        return {
+          ...group,
+          inputs: group.inputs.filter((input) => input.spot !== spotNumber),
+        };
+      }),
+    );
+  }
+
+  function handleAddGroup() {
+    setGroups((oldGroups) => {
+      const nextNumber = oldGroups.length + 1;
+
+      return [
+        ...oldGroups,
+        {
+          id: crypto.randomUUID(),
+          name: `イベント${nextNumber}`,
+          spotCount: 5,
+          spotNames: ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"],
+          inputs: [],
+        },
+      ];
+    });
+  }
+
+  function handleGroupNameChange(groupId: string, name: string) {
+    setGroups((oldGroups) =>
+      oldGroups.map((group) =>
+        group.id === groupId ? { ...group, name } : group,
+      ),
+    );
+  }
+
+  function handleSpotCountChange(groupId: string, value: number) {
+    const spotCount = Math.max(1, Math.floor(value));
+
+    setGroups((oldGroups) =>
+      oldGroups.map((group) => {
+        if (group.id !== groupId || group.spotCount === spotCount) {
+          return group;
+        }
+
+        return {
+          ...group,
+          spotCount,
+          spotNames: resizeSpotNames(group.spotNames, spotCount),
+          inputs: [],
+        };
+      }),
+    );
+  }
+
+  function handleDeleteGroup(groupId: string) {
+    if (groups.length <= 1) {
+      alert("最後の1グループは削除できません。");
       return;
     }
 
-    setInputs([]);
+    if (!confirm("このグループを削除しますか？")) {
+      return;
+    }
+
+    setGroups((oldGroups) => oldGroups.filter((group) => group.id !== groupId));
+  }
+
+  function handleResetAll() {
+    if (!confirm("全グループの観測データを削除しますか？")) {
+      return;
+    }
+
+    setGroups((oldGroups) =>
+      oldGroups.map((group) => ({
+        ...group,
+        inputs: [],
+      })),
+    );
   }
 
   function handleJoinTime(time: string) {
@@ -191,25 +254,45 @@ function App() {
   return (
     <>
       <h1>MHNow Spot Predictor</h1>
-      <div>
-        <label>スポット数:</label>
+      <section>
+        {/* <h2>エリア設定</h2> */}
 
-        <input
-          type="number"
-          min="1"
-          value={spotCount}
-          onChange={(e) => {
-            const value = Number(e.target.value);
+        {groups.map((group) => (
+          <div key={group.id} className="group-setting-row">
+            <span className="group-setting-label">エリア名:</span>
 
-            setSpotCount(value);
-            setSpotNames((old) => resizeSpotNames(old, value));
+            <strong className="group-setting-name">
+              {group.name || "名称未設定"}
+            </strong>
 
-            // Spot数変更時は現在の観測データを一度リセット。
-            setInputs([]);
-          }}
-        />
-      </div>
-      <label>
+            <label className="group-spot-count">
+              Spot数:
+              <input
+                type="number"
+                min="1"
+                value={group.spotCount}
+                onChange={(e) =>
+                  handleSpotCountChange(group.id, Number(e.target.value))
+                }
+              />
+            </label>
+
+            <button
+              type="button"
+              onClick={() => handleDeleteGroup(group.id)}
+              disabled={groups.length === 1}
+            >
+              削除
+            </button>
+          </div>
+        ))}
+
+        <button type="button" onClick={handleAddGroup}>
+          ＋ エリア追加
+        </button>
+      </section>
+
+      <label className="event-options">
         <input
           type="checkbox"
           checked={is24Hour}
@@ -219,21 +302,23 @@ function App() {
       </label>
       <button onClick={handleResetAll}>全スポット入力リセット</button>
       <ScheduleTable
-        rows={table}
-        spotCount={spotCount}
-        spotNames={spotNames}
+        groups={tables}
+        now={now}
+        joinedTime={joinedTime}
         onCellClick={handleCellClick}
         onSpotNameChange={handleSpotNameChange}
         onResetSpot={handleResetSpot}
-        now={now}
-        joinedTime={joinedTime}
         onJoinTime={handleJoinTime}
+        onGroupNameChange={handleGroupNameChange}
       />
-      <SpotSetting
-        spotNames={spotNames}
-        onSpotNameChange={handleSpotNameChange}
-      />
-      <footer>ver 0.1.0</footer>
+      {/* {tables.map((group) => (
+        <SpotSetting
+          key={group.id}
+          spotNames={group.spotNames}
+          onSpotNameChange={handleSpotNameChange}
+        />
+      ))} */}
+      <footer>ver 0.2.0</footer>
     </>
   );
 }

@@ -21,7 +21,7 @@
  * print_table() のような役割。
  */
 
-import type { ScheduleRow } from "../types";
+import type { ScheduleRow, SpotGroup } from "../types";
 
 import "./ScheduleTable.css";
 import { useEffect, useRef } from "react";
@@ -43,19 +43,15 @@ import { timeToMinutes } from "../utils/time";
  * )
  */
 type Props = {
-  // 表示するスケジュール
-  rows: ScheduleRow[];
-  // スポット数
-  spotCount: number;
-  spotNames: string[];
+  groups: (SpotGroup & { rows: ScheduleRow[] })[];
   now: Date;
   joinedTime: string | null;
-
   // セルをクリックした時に親(App.tsx)へ通知する関数
-  onCellClick: (time: string, spotIndex: number) => void;
-  onSpotNameChange: (index: number, name: string) => void;
-  onResetSpot: (spotIndex: number) => void;
+  onCellClick: (groupId: string, time: string, spotIndex: number) => void;
+  onSpotNameChange: (groupId: string, index: number, name: string) => void;
+  onResetSpot: (groupId: string, spotIndex: number) => void;
   onJoinTime: (time: string) => void;
+  onGroupNameChange: (groupId: string, name: string) => void;
 };
 
 /**
@@ -65,15 +61,14 @@ type Props = {
  * @param spotCount スポット総数
  */
 export default function ScheduleTable({
-  rows,
-  spotCount,
-  spotNames,
+  groups,
   now,
   joinedTime,
   onCellClick,
   onSpotNameChange,
   onResetSpot,
   onJoinTime,
+  onGroupNameChange,
 }: Props) {
   const currentRowRef = useRef<HTMLTableRowElement | null>(null);
 
@@ -132,71 +127,66 @@ export default function ScheduleTable({
     <table className="schedule-table">
       {/* 表のヘッダー部分 */}
       <thead>
+        {/* 1行目 */}
         <tr>
-          {/* 左端は時刻列 */}
-          <th>時刻</th>
+          <th rowSpan={2}>時刻</th>
 
-          {/*
-            スポット数分だけ列を作る。
-
-            例:
-            spotCount = 5
-
-            ↓
-
-            Spot1
-            Spot2
-            Spot3
-            Spot4
-            Spot5
-
-            を自動生成する。
-
-            Pythonなら:
-
-            for i in range(5):
-                print(i)
-
-            に近い。
-          */}
-          {Array.from({ length: spotCount }).map((_, i) => (
-            <th key={i}>
+          {groups.map((group, groupIndex) => (
+            <th
+              key={group.id}
+              colSpan={group.spotCount}
+              className={groupIndex > 0 ? "group-start" : ""}
+            >
               <input
                 type="text"
-                value={spotNames[i]}
-                onChange={(e) => onSpotNameChange(i, e.target.value)}
+                value={group.name}
+                aria-label="イベント名"
+                onChange={(e) => onGroupNameChange(group.id, e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.currentTarget.blur();
                   }
                 }}
               />
-
-              <button onClick={() => onResetSpot(i)}>×</button>
             </th>
           ))}
+        </tr>
+
+        {/* 2行目 */}
+        <tr>
+          {groups.map((group, groupIndex) =>
+            group.spotNames.map((spotName, i) => (
+              <th
+                key={`${group.id}-${i}`}
+                className={groupIndex > 0 && i === 0 ? "group-start" : ""}
+              >
+                <input
+                  type="text"
+                  value={spotName}
+                  onChange={(e) =>
+                    onSpotNameChange(group.id, i, e.target.value)
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.currentTarget.blur();
+                    }
+                  }}
+                />
+
+                <button onClick={() => onResetSpot(group.id, i)}>×</button>
+              </th>
+            )),
+          )}
         </tr>
       </thead>
 
       {/* 表の本体部分 */}
       <tbody>
-        {/*
-          rowsを1行ずつ表示する。
-
-          Python:
-
-          for row in rows:
-              ...
-
-          と同じ考え方。
-
-        */}
-        {rows.map((row, index) => (
+        {groups[0]?.rows.map((row, index) => (
           <tr
-            key={`${row.time}-${index}`}
+            key={row.time}
             ref={(el) => {
               if (isCurrentRow(row.time)) {
-                console.log("scroll target:", row.time);
                 currentRowRef.current = el;
               }
             }}
@@ -208,45 +198,32 @@ export default function ScheduleTable({
                   : ""
             }
           >
-            {/* 時刻表示 */}
             <td>{row.time}</td>
 
-            {/*
-              各スポット状態を表示。
+            {groups.map((group, groupIndex) =>
+              group.rows[index].spots.map((active, i) => (
+                <td
+                  key={`${group.id}-${i}`}
+                  className={[
+                    active
+                      ? isJoinTargetRow(row.time)
+                        ? "active-cell join-target-cell"
+                        : "active-cell"
+                      : "",
 
-              row.spotsの中身:
-
-              [
-                false,
-                false,
-                true,
-                false
-              ]
-
-              の場合、
-
-              Spot3だけ●になる。
-            */}
-            {row.spots.map((active, i) => (
-              <td
-                key={i}
-                className={
-                  active
-                    ? isJoinTargetRow(row.time)
-                      ? "active-cell join-target-cell"
-                      : "active-cell"
-                    : ""
-                }
-                onClick={() => onCellClick(row.time, i)}
-                onDoubleClick={() => {
-                  if (active) {
-                    onJoinTime(row.time);
-                  }
-                }}
-              >
-                {active ? (joinedTime === row.time ? "★" : "●") : ""}
-              </td>
-            ))}
+                    groupIndex > 0 && i === 0 ? "group-start" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={() => onCellClick(group.id, row.time, i)}
+                  onDoubleClick={() => {
+                    if (active) onJoinTime(row.time);
+                  }}
+                >
+                  {active ? (joinedTime === row.time ? "★" : "●") : ""}
+                </td>
+              )),
+            )}
           </tr>
         ))}
       </tbody>

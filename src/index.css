@@ -1,3 +1,5 @@
+/* index.css */
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -108,4 +110,138 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+.group-settings {
+  /*
+    グループ設定エリアの横幅。
+
+    - 画面幅から左右16pxずつ余白を確保する
+    - ただし最大でも620pxまでにする
+    - 画面が広くても枠線が横へ広がりすぎない
+  */
+  width: min(100% - 32px, 620px);
+
+  /*
+    上: 0
+    左右: auto（中央寄せ）
+    下: 24px（次の要素との間隔）
+  */
+  margin: 0 auto 24px;
+
+  /* 設定エリア内の文字を左揃えにする */
+  text-align: left;
+}
+
+.group-setting-row {
+  display: grid; /* 子要素をGrid（列・行）で配置する */
+
+  /*
+    横方向の列構成:
+    1列目: 「イベント名:」用に6rem固定
+    2列目: イベント名本体。最小12rem、最大16rem
+    3列目: 「Spot数: [入力欄]」の幅に合わせる
+    4列目: 「削除」ボタンの幅に合わせる
+
+    例:
+    イベント名: | 家             | Spot数: [5] | 削除
+  */
+  grid-template-columns: 4.5rem minmax(3rem, 6rem) auto auto;
+
+  /* グリッド全体を左寄せにする。画面幅いっぱいに列を広げない */
+  justify-content: center;
+
+  /* 各列の中身を縦方向の中央に揃える */
+  align-items: center;
+
+  /* 列と列の間隔。数値を小さくすると詰まり、大きくすると広がる */
+  gap: 12px;
+
+  /* 枠線の内側余白。上下12px、左右16px */
+  padding: 12px 16px;
+
+  /* 薄い枠線 */
+  border: 1px solid var(--border);
+
+  /* 枠の角を丸くする */
+  border-radius: 8px;
+
+  /* グループ設定行どうしの上下間隔 */
+  margin-top: 8px;
+}
+
+.group-setting-label {
+  /* 「イベント名:」の文字色。テーマ変数を利用 */
+  color: var(--text);
+}
+
+.group-setting-name {
+  /*
+    長すぎるイベント名を、設定済みの列幅内に収める。
+    例: とても長いイベント名... のように省略表示される
+  */
+  overflow: hidden;
+
+  /* 省略した末尾を「...」で表示する */
+  text-overflow: ellipsis;
+
+  /* イベント名を改行させない */
+  white-space: nowrap;
+
+  /* イベント名の文字色。見出し用の濃い色 */
+  color: var(--text-h);
+
+  /* イベント名を左揃えに */
+  text-align: left;
+}
+
+.group-spot-count {
+  /* 「Spot数:」と入力欄を横並びにする */
+  display: flex;
+
+  /* 文字と入力欄を縦方向の中央に揃える */
+  align-items: center;
+
+  /* 「Spot数:」と入力欄の間隔 */
+  gap: 8px;
+
+  /* 狭い画面でも「Spot数:」の途中で改行しない */
+  white-space: nowrap;
+}
+
+.group-spot-count input {
+  /* 数値入力欄の横幅。大きくすると数字欄が広がる */
+  width: 4rem;
+
+  /* 入力欄の内側余白。上下6px、左右8px */
+  padding: 6px 8px;
+
+  /* 入力文字の色 */
+  color: var(--text-h);
+
+  /* 入力欄の背景色 */
+  background: var(--bg);
+
+  /* 入力欄の枠線 */
+  border: 1px solid var(--border);
+
+  /* 入力欄の角を丸くする */
+  border-radius: 4px;
+}
+
+.event-options {
+  /*
+    上に24pxの余白を作る。
+    数値を大きくすると、エリア追加ボタンとの間隔が広がる。
+  */
+  margin-top: 12px;
+
+  /* marginと余白を効かせやすくする */
+  display: inline-flex;
+
+  /* チェックボックスと文字の間隔 */
+  gap: 6px;
+
+  /* チェックボックスと文字を縦方向の中央で揃える */
+  align-items: center;
 }

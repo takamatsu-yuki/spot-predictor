@@ -54,7 +54,9 @@ export function loadData(): SaveData | null {
   }
 
   try {
-    return JSON.parse(saved);
+    const data = JSON.parse(saved);
+
+    return data as SaveData;
   } catch {
     return null;
   }
