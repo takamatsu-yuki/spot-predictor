@@ -205,3 +205,34 @@
 .schedule-table thead tr:first-child th:first-child {
   z-index: 30;
 }
+
+/* =========================
+   スマホ向け横スクロール
+========================= */
+
+.schedule-table-wrapper {
+  /*
+    枠自体は親要素の幅を超えない。
+    表が横に長い場合だけ、この枠の中で横スクロールする。
+  */
+  max-width: 100%;
+
+  /* 横方向だけスクロールを許可する */
+  overflow-x: auto;
+
+  /* スマホで慣性スクロールを有効にする */
+  -webkit-overflow-scrolling: touch;
+}
+
+.schedule-table {
+  /*
+    表は必要な列幅を維持する。
+    グループが増えた場合は、親のスクロール枠の中で横に広がる。
+  */
+  width: max-content;
+
+  /*
+    列数が少ないときは、親要素の横幅いっぱいまで広げる。
+  */
+  min-width: 100%;
+}
