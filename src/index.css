@@ -136,17 +136,16 @@ code {
 .group-setting-row {
   display: grid; /* 子要素をGrid（列・行）で配置する */
 
-  /*
-    横方向の列構成:
-    1列目: 「イベント名:」用に6rem固定
-    2列目: イベント名本体。最小12rem、最大16rem
-    3列目: 「Spot数: [入力欄]」の幅に合わせる
-    4列目: 「削除」ボタンの幅に合わせる
+  grid-template-columns:
+    4.5rem /* エリア名: */
+    minmax(3rem, 6rem) /* イベント名 */
+    auto /* Spot数 */
+    auto /* 表示 */
+    auto; /* 削除 */
 
-    例:
-    イベント名: | 家             | Spot数: [5] | 削除
-  */
-  grid-template-columns: 4.5rem minmax(3rem, 6rem) auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 
   /* グリッド全体を左寄せにする。画面幅いっぱいに列を広げない */
   justify-content: center;

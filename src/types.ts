@@ -33,6 +33,8 @@ export interface SpotGroup {
 
   // 観測データ
   inputs: InputData[];
+
+  hidden: boolean;
 }
 
 // 保存データ

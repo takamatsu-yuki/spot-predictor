@@ -43,6 +43,7 @@ function App() {
       spotCount: 5,
       spotNames: ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"],
       inputs: [],
+      hidden: false,
     },
   ]);
   // 全グループ共通設定
@@ -117,10 +118,12 @@ function App() {
    * scheduleBuilder.ts
    * 側で行う。
    */
-  const tables = groups.map((group) => ({
-    ...group,
-    rows: buildSchedule(group.spotCount, group.inputs, is24Hour),
-  }));
+  const visibleTables = groups
+    .filter((group) => !group.hidden)
+    .map((group) => ({
+      ...group,
+      rows: buildSchedule(group.spotCount, group.inputs, is24Hour),
+    }));
 
   /**
    * 表セルクリック時。
@@ -207,6 +210,7 @@ function App() {
           spotCount: 5,
           spotNames: ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"],
           inputs: [],
+          hidden: false,
         },
       ];
     });
@@ -267,6 +271,19 @@ function App() {
 
   function handleJoinTime(time: string) {
     setJoinedTime((old) => (old === time ? null : time));
+  }
+
+  function handleVisibleChange(groupId: string, visible: boolean) {
+    setGroups((old) =>
+      old.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              hidden: !visible,
+            }
+          : group,
+      ),
+    );
   }
 
   return (
@@ -338,6 +355,18 @@ function App() {
               />
             </label>
 
+            <label>
+              <input
+                type="checkbox"
+                checked={!group.hidden}
+                onChange={(e) =>
+                  handleVisibleChange(group.id, e.target.checked)
+                }
+              />
+              {/* 表示 */}
+              {group.hidden ? "🙈" : "👁️"}
+            </label>
+
             <button
               type="button"
               onClick={() => handleDeleteGroup(group.id)}
@@ -363,7 +392,7 @@ function App() {
       </label>
       <button onClick={handleResetAll}>全スポット入力リセット</button>
       <ScheduleTable
-        groups={tables}
+        groups={visibleTables}
         now={now}
         joinedTime={joinedTime}
         onCellClick={handleCellClick}
