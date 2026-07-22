@@ -137,10 +137,20 @@ function App() {
           return group;
         }
 
+        // このSpotは既に登録済み？
+        const existing = group.inputs.find(
+          (input) => input.spot === spotNumber,
+        );
+
+        // 別の時刻なら無視
+        if (existing && existing.time !== time) {
+          return group;
+        }
+
         return {
           ...group,
           inputs: [
-            ...group.inputs.filter((input) => input.spot !== spotNumber),
+            ...group.inputs.filter((input) => input.time !== time),
             {
               spot: spotNumber,
               time,
