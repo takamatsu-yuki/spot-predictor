@@ -71,7 +71,7 @@ export function calculateSpotColumn(
 
     で戻ってくる
   */
-  const cycle = spotCount * ACTIVE_DURATION;
+  const cycle = Math.max(spotCount, 2) * ACTIVE_DURATION;
 
   /*
     基準時刻から過去へ戻る
