@@ -111,6 +111,11 @@
   color: white;
   font-weight: bold;
 }
+/* 現在時刻の行全体を上下の紫線で囲む */
+.schedule-table tbody tr.current-row td {
+  border-top: 3px solid #a855f7;
+  border-bottom: 3px solid #a855f7;
+}
 
 /* =========================
    アクティブセル
