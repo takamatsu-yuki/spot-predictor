@@ -190,13 +190,12 @@ export default function ScheduleTable({
                 currentRowRef.current = el;
               }
             }}
-            className={
-              isJoinTargetRow(row.time)
-                ? "join-target-row"
-                : isCurrentRow(row.time)
-                  ? "current-row"
-                  : ""
-            }
+            className={[
+              isJoinTargetRow(row.time) ? "join-target-row" : "",
+              isCurrentRow(row.time) ? "current-row" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
             <td>{row.time}</td>
 
