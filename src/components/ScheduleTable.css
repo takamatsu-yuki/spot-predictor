@@ -149,6 +149,17 @@
    次回参加可能枠
 ========================= */
 
+/* 次回参加可能時刻の時刻セルを金色にする */
+.schedule-table tbody tr.join-target-row td:first-child {
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+}
+/* 次回参加可能時刻の行全体を金色ラインで囲む */
+.schedule-table tbody tr.join-target-row td {
+  border-top: 3px solid gold;
+  border-bottom: 3px solid gold;
+}
 .join-target-cell {
   box-shadow: inset 0 0 0 3px gold;
 }
