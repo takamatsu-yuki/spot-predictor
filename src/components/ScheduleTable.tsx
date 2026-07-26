@@ -21,7 +21,7 @@
  * print_table() のような役割。
  */
 
-import type { ScheduleRow, SpotGroup } from "../types";
+import type { ScheduleRow, SpotGroup, JoinedMark } from "../types";
 
 import "./ScheduleTable.css";
 import { useEffect, useRef } from "react";
@@ -45,13 +45,14 @@ import { timeToMinutes } from "../utils/time";
 type Props = {
   groups: (SpotGroup & { rows: ScheduleRow[] })[];
   now: Date;
-  joinedTime: string | null;
   // セルをクリックした時に親(App.tsx)へ通知する関数
   onCellClick: (groupId: string, time: string, spotIndex: number) => void;
   onSpotNameChange: (groupId: string, index: number, name: string) => void;
   onResetSpot: (groupId: string, spotIndex: number) => void;
-  onJoinTime: (time: string) => void;
   onGroupNameChange: (groupId: string, name: string) => void;
+
+  starredMarks: JoinedMark[];
+  onToggleStar: (time: string, spot: number) => void;
 };
 
 /**
@@ -63,11 +64,11 @@ type Props = {
 export default function ScheduleTable({
   groups,
   now,
-  joinedTime,
+  starredMarks,
+  onToggleStar,
   onCellClick,
   onSpotNameChange,
   onResetSpot,
-  onJoinTime,
   onGroupNameChange,
 }: Props) {
   const currentRowRef = useRef<HTMLTableRowElement | null>(null);
@@ -90,14 +91,26 @@ export default function ScheduleTable({
     });
   }
 
+  function isStarred(time: string, spot: number): boolean {
+    return starredMarks.some(
+      (mark) => mark.time === time && mark.spot === spot,
+    );
+  }
+
   function getJoinTargetTimes(): number[] {
-    if (!joinedTime) {
+    if (starredMarks.length === 0) {
       return [];
     }
 
+    const latest = starredMarks.reduce((latest, current) =>
+      timeToMinutes(current.time) > timeToMinutes(latest.time)
+        ? current
+        : latest,
+    );
+
     const targets: number[] = [];
 
-    let target = timeToMinutes(joinedTime) + 180;
+    let target = timeToMinutes(latest.time) + 180;
 
     const end = 24 * 60;
 
@@ -215,11 +228,14 @@ export default function ScheduleTable({
                     .filter(Boolean)
                     .join(" ")}
                   onClick={() => onCellClick(group.id, row.time, i)}
+                  // onDoubleClick={() => {
+                  //   if (active) onJoinTime(row.time);
+                  // }}
                   onDoubleClick={() => {
-                    if (active) onJoinTime(row.time);
+                    onToggleStar(row.time, i + 1);
                   }}
                 >
-                  {active ? (joinedTime === row.time ? "★" : "●") : ""}
+                  {isStarred(row.time, i + 1) ? "★" : active ? "●" : ""}
                 </td>
               )),
             )}

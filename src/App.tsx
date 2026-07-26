@@ -31,7 +31,7 @@ import { useEffect, useState } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import { buildSchedule } from "./utils/scheduleBuilder";
 import { saveData, loadData } from "./utils/storage";
-import type { SpotGroup } from "./types";
+import type { SpotGroup, JoinedMark } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
 
 function App() {
@@ -49,8 +49,8 @@ function App() {
   // 全グループ共通設定
   const [is24Hour, setIs24Hour] = useState(false);
 
-  // 全グループ共通参加時刻
-  const [joinedTime, setJoinedTime] = useState<string | null>(null);
+  // ★マーク一覧
+  const [starredMarks, setStarredMarks] = useState<JoinedMark[]>([]);
 
   // 保存復元完了
   const [loaded, setLoaded] = useState(false);
@@ -78,8 +78,8 @@ function App() {
     */
     if (data && Array.isArray(data.groups)) {
       setGroups(data.groups);
-      setJoinedTime(data.joinedTime ?? null);
       setIs24Hour(data.is24Hour ?? false);
+      setStarredMarks(data.starredMarks ?? []);
     }
 
     setLoaded(true);
@@ -98,10 +98,10 @@ function App() {
 
     saveData({
       groups,
-      joinedTime,
       is24Hour,
+      starredMarks,
     });
-  }, [loaded, groups, joinedTime, is24Hour]);
+  }, [loaded, groups, is24Hour, starredMarks]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -196,6 +196,8 @@ function App() {
         };
       }),
     );
+
+    setStarredMarks((old) => old.filter((mark) => mark.spot !== spotNumber));
   }
 
   function handleAddGroup() {
@@ -241,6 +243,9 @@ function App() {
         };
       }),
     );
+
+    // Spot数変更時は参加履歴もリセット
+    setStarredMarks([]);
   }
 
   function handleDeleteGroup(groupId: string) {
@@ -267,10 +272,32 @@ function App() {
         inputs: [],
       })),
     );
+
+    setStarredMarks([]);
   }
 
-  function handleJoinTime(time: string) {
-    setJoinedTime((old) => (old === time ? null : time));
+  function handleToggleStar(time: string, spot: number) {
+    setStarredMarks((old) => {
+      const exists = old.some(
+        (mark) => mark.time === time && mark.spot === spot,
+      );
+
+      // 同じセルなら削除
+      if (exists) {
+        return old.filter(
+          (mark) => !(mark.time === time && mark.spot === spot),
+        );
+      }
+
+      // 同じ時刻の★を消してから追加
+      return [
+        ...old.filter((mark) => mark.time !== time),
+        {
+          time,
+          spot,
+        },
+      ];
+    });
   }
 
   function handleVisibleChange(groupId: string, visible: boolean) {
@@ -394,11 +421,11 @@ function App() {
       <ScheduleTable
         groups={visibleTables}
         now={now}
-        joinedTime={joinedTime}
+        starredMarks={starredMarks}
+        onToggleStar={handleToggleStar}
         onCellClick={handleCellClick}
         onSpotNameChange={handleSpotNameChange}
         onResetSpot={handleResetSpot}
-        onJoinTime={handleJoinTime}
         onGroupNameChange={handleGroupNameChange}
       />
       {/* {tables.map((group) => (

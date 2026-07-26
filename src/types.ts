@@ -17,6 +17,11 @@ export interface InputData {
   time: string;
 }
 
+export type JoinedMark = {
+  time: string;
+  spot: number;
+};
+
 // 1つのイベントグループ
 export interface SpotGroup {
   // グループ識別用ID
@@ -45,6 +50,6 @@ export interface SaveData {
   // 24時間イベントか（全体共通）
   is24Hour: boolean;
 
-  // 参加基準時刻（全体で1つ）
-  joinedTime: string | null;
+  // ★を付けた時刻一覧
+  starredMarks: JoinedMark[];
 }
