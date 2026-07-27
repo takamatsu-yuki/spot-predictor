@@ -33,6 +33,8 @@ import { buildSchedule } from "./utils/scheduleBuilder";
 import { saveData, loadData } from "./utils/storage";
 import type { SpotGroup, JoinedMark } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   // イベントグループ一覧
@@ -57,6 +59,8 @@ function App() {
 
   // 現在時刻
   const [now, setNow] = useState(new Date());
+
+  const [menuOpen, setMenuOpen] = useState(false);
 
   /*
     Spot数入力欄で、入力途中の文字列を保持する。
@@ -315,7 +319,8 @@ function App() {
 
   return (
     <>
-      <h1>MHNow Spot Predictor</h1>
+      <Header onMenuClick={() => setMenuOpen(true)} />
+      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
       <section>
         {/* <h2>エリア設定</h2> */}
 

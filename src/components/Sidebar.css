@@ -1,0 +1,67 @@
+/* Sidebar.css */
+
+/* サイドバー本体 */
+.sidebar {
+  position: fixed;
+
+  top: 0;
+  right: -320px;
+
+  width: 320px;
+  height: 100vh;
+
+  background: #fff;
+
+  transition: right 0.25s ease;
+
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+
+  z-index: 1000;
+}
+
+/* サイドバー表示 */
+.sidebar.open {
+  right: 0;
+}
+
+/*
+  サイドバー上部。
+
+  左にタイトル、
+  右に閉じるボタンを配置する。
+*/
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 20px;
+
+  border-bottom: 1px solid #ddd;
+}
+
+/* タイトル */
+.sidebar-header h2 {
+  margin: 0;
+}
+
+/* 閉じるボタン */
+.sidebar-close {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+
+  background: transparent;
+
+  font-size: 1.3rem;
+
+  cursor: pointer;
+
+  border-radius: 6px;
+}
+
+/* 閉じるボタン（ホバー時） */
+.sidebar-close:hover {
+  background: #f2f2f2;
+}
