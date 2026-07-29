@@ -35,7 +35,7 @@ import type { SpotGroup, JoinedMark } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import AreaSettings from "./components/AreaSettings";
+// import AreaSettings from "./components/AreaSettings";
 
 function App() {
   // イベントグループ一覧
@@ -321,8 +321,9 @@ function App() {
   return (
     <>
       <Header onMenuClick={() => setMenuOpen(true)} />
-      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <AreaSettings
+      <Sidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
         groups={groups}
         spotCountDrafts={spotCountDrafts}
         setSpotCountDrafts={setSpotCountDrafts}

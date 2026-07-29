@@ -136,12 +136,8 @@ code {
 .group-setting-row {
   display: grid; /* 子要素をGrid（列・行）で配置する */
 
-  grid-template-columns:
-    4.5rem /* エリア名: */
-    minmax(3rem, 6rem) /* イベント名 */
-    auto /* Spot数 */
-    auto /* 表示 */
-    auto; /* 削除 */
+  /* Spot数・表示・削除を必要な幅だけ確保する */
+  grid-template-columns: auto auto auto;
 
   align-items: center;
   justify-content: center;

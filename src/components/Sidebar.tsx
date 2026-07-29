@@ -16,13 +16,37 @@
  */
 
 import "./Sidebar.css";
+import AreaSettings from "./AreaSettings";
+import type { SpotGroup } from "../types";
+import type { Dispatch, SetStateAction } from "react";
+import Accordion from "./Accordion";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+
+  groups: SpotGroup[];
+  spotCountDrafts: Record<string, string>;
+  setSpotCountDrafts: Dispatch<SetStateAction<Record<string, string>>>;
+
+  onSpotCountChange: (groupId: string, value: number) => void;
+  onVisibleChange: (groupId: string, visible: boolean) => void;
+  onDeleteGroup: (groupId: string) => void;
+  onAddGroup: () => void;
 };
 
-export default function Sidebar({ open, onClose }: Props) {
+export default function Sidebar({
+  open,
+  onClose,
+
+  groups,
+  spotCountDrafts,
+  setSpotCountDrafts,
+  onSpotCountChange,
+  onVisibleChange,
+  onDeleteGroup,
+  onAddGroup,
+}: Props) {
   return (
     <aside className={`sidebar ${open ? "open" : ""}`}>
       <div className="sidebar-header">
@@ -32,6 +56,17 @@ export default function Sidebar({ open, onClose }: Props) {
           ×
         </button>
       </div>
+      <Accordion title="エリア管理">
+        <AreaSettings
+          groups={groups}
+          spotCountDrafts={spotCountDrafts}
+          setSpotCountDrafts={setSpotCountDrafts}
+          onSpotCountChange={onSpotCountChange}
+          onVisibleChange={onVisibleChange}
+          onDeleteGroup={onDeleteGroup}
+          onAddGroup={onAddGroup}
+        />
+      </Accordion>
     </aside>
   );
 }

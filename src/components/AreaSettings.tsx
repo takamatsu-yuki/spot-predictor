@@ -18,6 +18,7 @@
 
 import type { SpotGroup } from "../types";
 // import type { Dispatch, SetStateAction } from "react";
+import AreaAccordion from "./AreaAccordion";
 
 type Props = {
   groups: SpotGroup[];
@@ -49,71 +50,67 @@ export default function AreaSettings({
   return (
     <section>
       {groups.map((group) => (
-        <div key={group.id} className="group-setting-row">
-          <span className="group-setting-label">エリア名:</span>
+        <AreaAccordion key={group.id} title={group.name || "名称未設定"}>
+          <div className="group-setting-row">
+            <label className="group-spot-count">
+              Spot数:
+              <input
+                type="number"
+                min="1"
+                // 入力途中の文字列があればそれを表示する。なければ、確定済みのSpot数を表示する。
+                value={spotCountDrafts[group.id] ?? String(group.spotCount)}
+                // 入力中は、まだSpot数を確定しない。そのため、一度すべて消して「6」と入力できる。
+                onChange={(e) => {
+                  setSpotCountDrafts((old) => ({
+                    ...old,
+                    [group.id]: e.target.value,
+                  }));
+                }}
+                // 入力欄からカーソルが外れた時点でSpot数を確定する。空欄・0・不正な値なら1に戻す。
+                onBlur={() => {
+                  const text =
+                    spotCountDrafts[group.id] ?? String(group.spotCount);
+                  const value = Number(text);
 
-          <strong className="group-setting-name">
-            {group.name || "名称未設定"}
-          </strong>
+                  onSpotCountChange(
+                    group.id,
+                    Number.isInteger(value) && value >= 1 ? value : 1,
+                  );
 
-          <label className="group-spot-count">
-            Spot数:
-            <input
-              type="number"
-              min="1"
-              // 入力途中の文字列があればそれを表示する。なければ、確定済みのSpot数を表示する。
-              value={spotCountDrafts[group.id] ?? String(group.spotCount)}
-              // 入力中は、まだSpot数を確定しない。そのため、一度すべて消して「6」と入力できる。
-              onChange={(e) => {
-                setSpotCountDrafts((old) => ({
-                  ...old,
-                  [group.id]: e.target.value,
-                }));
-              }}
-              // 入力欄からカーソルが外れた時点でSpot数を確定する。空欄・0・不正な値なら1に戻す。
-              onBlur={() => {
-                const text =
-                  spotCountDrafts[group.id] ?? String(group.spotCount);
-                const value = Number(text);
+                  // 入力途中の文字列を削除し、確定したSpot数を再表示する。
+                  setSpotCountDrafts((old) => {
+                    const next = { ...old };
+                    delete next[group.id];
+                    return next;
+                  });
+                }}
+                // Enterキーでも入力を確定する。
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </label>
 
-                onSpotCountChange(
-                  group.id,
-                  Number.isInteger(value) && value >= 1 ? value : 1,
-                );
+            <label>
+              <input
+                type="checkbox"
+                checked={!group.hidden}
+                onChange={(e) => onVisibleChange(group.id, e.target.checked)}
+              />
+              {group.hidden ? "🙈" : "👁️"}
+            </label>
 
-                // 入力途中の文字列を削除し、確定したSpot数を再表示する。
-                setSpotCountDrafts((old) => {
-                  const next = { ...old };
-                  delete next[group.id];
-                  return next;
-                });
-              }}
-              // Enterキーでも入力を確定する。
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.currentTarget.blur();
-                }
-              }}
-            />
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={!group.hidden}
-              onChange={(e) => onVisibleChange(group.id, e.target.checked)}
-            />
-            {group.hidden ? "🙈" : "👁️"}
-          </label>
-
-          <button
-            type="button"
-            onClick={() => onDeleteGroup(group.id)}
-            disabled={groups.length === 1}
-          >
-            削除
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => onDeleteGroup(group.id)}
+              disabled={groups.length === 1}
+            >
+              削除
+            </button>
+          </div>
+        </AreaAccordion>
       ))}
 
       <button type="button" onClick={onAddGroup}>
