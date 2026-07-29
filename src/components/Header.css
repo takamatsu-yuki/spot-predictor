@@ -13,26 +13,33 @@
   height: 60px;
   padding: 0 16px;
 
-  color: white;
-  background-color: #1f355d;
+  background-color: var(--brand-bg); /* ブランド背景 */
+  color: var(--brand-fg); /* ブランド文字色 */
 
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border); /* テーマ枠線 */
 }
 
 /* タイトル */
 .app-header h1 {
   margin: 0;
-
   font-size: 1.5rem;
-  color: white;
+  /* 常に白系で固定 */
+  color: var(--brand-fg);
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  color: var(--brand-fg);
 }
 
 /* メニューボタン */
 .menu-button {
   margin-left: auto;
-  /* color: white; */
+  color: var(--brand-fg); /* 白固定 */
+  background-color: transparent; /* 初期は透明 */
+  border-radius: 6px;
 }
 
 .menu-button:hover {
-  background-color: rgba(255,255,255,0.15);
+  background-color: var(--brand-hover-bg);
 }

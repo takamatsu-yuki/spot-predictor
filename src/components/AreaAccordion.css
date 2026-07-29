@@ -5,25 +5,28 @@
   margin: 12px 0;
 }
 
-/* エリア見出し */
+/* エリア見出し（テーマ色で統一） */
 .area-accordion-header {
   display: flex;
-
   justify-content: space-between;
   align-items: center;
 
   width: 100%;
-
   padding: 10px 14px;
 
-  background-color: #ffffff;
-
-  border: 1px solid #d8d8d8;
+  background-color: var(--bg);        /* テーマ背景 */
+  color: var(--text-h);               /* 見出し文字色 */
+  border: 1px solid var(--border);    /* テーマ枠線 */
 
   cursor: pointer;
 }
 
-/* ホバー */
+/* ホバー（テーマの濃い背景） */
 .area-accordion-header:hover {
-  background-color: #f5f5f5;
+  background-color: var(--code-bg);   /* 少し濃い背景 */
+}
+
+/* 子要素（開閉） */
+.area-accordion-content {
+  padding: 12px 16px;
 }
