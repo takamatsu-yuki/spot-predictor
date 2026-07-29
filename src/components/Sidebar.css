@@ -1,24 +1,22 @@
 /* Sidebar.css */
 
-/* Sidebar本体 */
+/* サイドバー本体 */
 .sidebar {
   position: fixed;
+
   top: 0;
   right: -320px;
+
   width: 320px;
   height: 100vh;
 
-  background: var(--bg); /* テーマ背景 */
-  color: var(--text); /* テーマ文字色 */
+  background: #fff;
 
-  box-shadow: -2px 0 10px var(--shadow);
   transition: right 0.25s ease;
-  z-index: 1000;
-}
 
-.sidebar-header h2 {
-  margin: 0;
-  color: var(--brand-fg);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+
+  z-index: 1000;
 }
 
 /* サイドバー表示 */
@@ -38,41 +36,60 @@
   justify-content: space-between;
 
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
 
-  background: var(--brand-bg); /* ブランド色 */
-  color: var(--brand-fg);
+  border-bottom: 1px solid #ddd;
+}
+
+/* タイトル */
+.sidebar-header h2 {
+  margin: 0;
 }
 
 /* 閉じるボタン */
 .sidebar-close {
   width: 36px;
   height: 36px;
+
   border: none;
+
   background: transparent;
-  color: var(--brand-fg);
+
+  font-size: 1.3rem;
+
   cursor: pointer;
+
   border-radius: 6px;
 }
 
 /* 閉じるボタン（ホバー時） */
 .sidebar-close:hover {
-  background: var(--brand-hover-bg);
+  background: #f2f2f2;
 }
 
 /* サイドバー表示中に背景を覆う */
 .sidebar-overlay {
   position: fixed;
+
   inset: 0;
-  background-color: var(--sidebar-overlay-bg); /* テーマ変数 */
+
+  background-color: rgba(0, 0, 0, 0);
+
   opacity: 0;
+
   pointer-events: none;
-  transition: opacity 0.25s ease;
+
+  transition:
+    background-color 0.25s ease,
+    opacity 0.25s ease;
+
   z-index: 999;
 }
 
 /* サイドバー表示中 */
 .sidebar-overlay.open {
+  background-color: rgba(0, 0, 0, 0.35);
+
   opacity: 1;
+
   pointer-events: auto;
 }
