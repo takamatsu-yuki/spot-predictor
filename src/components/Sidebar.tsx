@@ -48,25 +48,33 @@ export default function Sidebar({
   onAddGroup,
 }: Props) {
   return (
-    <aside className={`sidebar ${open ? "open" : ""}`}>
-      <div className="sidebar-header">
-        <h2>メニュー</h2>
+    <>
+      <div
+        className={`sidebar-overlay ${open ? "open" : ""}`}
+        onClick={onClose}
+      />
 
-        <button className="sidebar-close" onClick={onClose}>
-          ×
-        </button>
-      </div>
-      <Accordion title="エリア管理">
-        <AreaSettings
-          groups={groups}
-          spotCountDrafts={spotCountDrafts}
-          setSpotCountDrafts={setSpotCountDrafts}
-          onSpotCountChange={onSpotCountChange}
-          onVisibleChange={onVisibleChange}
-          onDeleteGroup={onDeleteGroup}
-          onAddGroup={onAddGroup}
-        />
-      </Accordion>
-    </aside>
+      <aside className={`sidebar ${open ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h2>メニュー</h2>
+
+          <button type="button" className="sidebar-close" onClick={onClose}>
+            ×
+          </button>
+        </div>
+
+        <Accordion title="エリア管理">
+          <AreaSettings
+            groups={groups}
+            spotCountDrafts={spotCountDrafts}
+            setSpotCountDrafts={setSpotCountDrafts}
+            onSpotCountChange={onSpotCountChange}
+            onVisibleChange={onVisibleChange}
+            onDeleteGroup={onDeleteGroup}
+            onAddGroup={onAddGroup}
+          />
+        </Accordion>
+      </aside>
+    </>
   );
 }

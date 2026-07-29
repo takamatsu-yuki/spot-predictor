@@ -65,3 +65,31 @@
 .sidebar-close:hover {
   background: #f2f2f2;
 }
+
+/* サイドバー表示中に背景を覆う */
+.sidebar-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background-color: rgba(0, 0, 0, 0);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    background-color 0.25s ease,
+    opacity 0.25s ease;
+
+  z-index: 999;
+}
+
+/* サイドバー表示中 */
+.sidebar-overlay.open {
+  background-color: rgba(0, 0, 0, 0.35);
+
+  opacity: 1;
+
+  pointer-events: auto;
+}
