@@ -17,10 +17,15 @@ import "./AreaAccordion.css";
 type Props = {
   title: string;
   children?: ReactNode;
+  defaultOpen?: boolean;
 };
 
-export default function AreaAccordion({ title, children }: Props) {
-  const [open, setOpen] = useState(true);
+export default function AreaAccordion({
+  title,
+  children,
+  defaultOpen = true,
+}: Props) {
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
     <section className="area-accordion">

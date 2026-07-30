@@ -50,7 +50,13 @@ export default function AreaSettings({
   return (
     <section>
       {groups.map((group) => (
-        <AreaAccordion key={group.id} title={group.name || "名称未設定"}>
+        <AreaAccordion
+          key={group.id}
+          title={group.name || "名称未設定"}
+          // 表示状態に応じてデフォルト開閉を決める
+          defaultOpen={!group.hidden}
+        >
+          {/* ここが子要素（children）として AreaAccordion に渡される */}
           <div className="group-setting-row">
             <label className="group-spot-count">
               Spot数:
