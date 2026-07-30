@@ -30,11 +30,10 @@ export default function AreaAccordion({ title, children }: Props) {
         onClick={() => setOpen((old) => !old)}
       >
         <span>{title}</span>
-
         <span>{open ? "▼" : "▶"}</span>
       </button>
 
-      {open && children}
+      {open && <div className="area-accordion-content">{children}</div>}
     </section>
   );
 }

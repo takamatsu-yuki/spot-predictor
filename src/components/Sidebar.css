@@ -10,7 +10,8 @@
   width: 320px;
   height: 100vh;
 
-  background: #fff;
+  background: var(--surface-bg);
+  color: var(--surface-text);
 
   transition: right 0.25s ease;
 
@@ -45,6 +46,7 @@
 /* タイトル */
 .sidebar-header h2 {
   margin: 0;
+  color: var(--brand-text);
 }
 
 /* 閉じるボタン */
@@ -55,6 +57,7 @@
   border: none;
 
   background: transparent;
+  color: var(--brand-text);
 
   font-size: 1.3rem;
 
@@ -65,7 +68,7 @@
 
 /* 閉じるボタン（ホバー時） */
 .sidebar-close:hover {
-  background: #f2f2f2;
+  background: var(--brand-hover-bg);
 }
 
 /* サイドバー表示中に背景を覆う */
