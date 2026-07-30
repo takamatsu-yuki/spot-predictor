@@ -36,8 +36,8 @@
   justify-content: space-between;
 
   padding: 16px 20px;
-  color: white;
-  background-color: #1f355d;
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
 
   border-bottom: 1px solid #ddd;
 }

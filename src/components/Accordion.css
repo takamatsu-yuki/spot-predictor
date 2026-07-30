@@ -23,8 +23,8 @@
 
   border: none;
 
-  background-color: #1f355d;
-  color: white;
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
   font-size: 1rem;
   font-weight: bold;
 

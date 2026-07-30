@@ -13,8 +13,8 @@
   height: 60px;
   padding: 0 16px;
 
-  color: white;
-  background-color: #1f355d;
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
 
   border-bottom: 1px solid #ddd;
 }
@@ -34,5 +34,5 @@
 }
 
 .menu-button:hover {
-  background-color: rgba(255,255,255,0.15);
+  background-color: rgba(255, 255, 255, 0.15);
 }
