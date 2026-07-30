@@ -359,7 +359,7 @@ function App() {
           onSpotNameChange={handleSpotNameChange}
         />
       ))} */}
-      <footer>ver 0.2.0</footer>
+      <footer>ver 0.3.0</footer>
     </>
   );
 }
