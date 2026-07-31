@@ -126,7 +126,13 @@ export default function ScheduleTable({
   useEffect(() => {
     setTimeout(() => {
       if (currentRowRef.current) {
-        const y = currentRowRef.current.offsetTop - 30;
+        const headerHeight = parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--header-height",
+          ),
+        );
+
+        const y = currentRowRef.current.offsetTop - headerHeight - 60;
 
         window.scrollTo({
           top: y,
