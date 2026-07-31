@@ -18,17 +18,23 @@
 import "./Sidebar.css";
 import AreaSettings from "./AreaSettings";
 import type { SpotGroup } from "../types";
-import type { Dispatch, SetStateAction } from "react";
 import Accordion from "./Accordion";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 
+  // 全体設定のための3つ
+  is24Hour: boolean;
+  setIs24Hour: (value: boolean) => void;
+  handleResetAll: () => void;
+
+  // エリア管理用
   groups: SpotGroup[];
   spotCountDrafts: Record<string, string>;
-  setSpotCountDrafts: Dispatch<SetStateAction<Record<string, string>>>;
-
+  setSpotCountDrafts: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
   onSpotCountChange: (groupId: string, value: number) => void;
   onVisibleChange: (groupId: string, visible: boolean) => void;
   onDeleteGroup: (groupId: string) => void;
@@ -38,6 +44,10 @@ type Props = {
 export default function Sidebar({
   open,
   onClose,
+
+  is24Hour,
+  setIs24Hour,
+  handleResetAll,
 
   groups,
   spotCountDrafts,
@@ -62,6 +72,42 @@ export default function Sidebar({
             ×
           </button>
         </div>
+
+        <aside className={`sidebar ${open ? "open" : ""}`}>
+          <div className="sidebar-header">
+            <h2>メニュー</h2>
+            <button className="sidebar-close" onClick={onClose}>
+              ×
+            </button>
+          </div>
+
+          {/* 全体設定 */}
+          <div className="sidebar-global-settings">
+            <label className="event-options">
+              <input
+                type="checkbox"
+                checked={is24Hour}
+                onChange={(e) => setIs24Hour(e.target.checked)}
+              />
+              24時間開催イベント中
+            </label>
+
+            <button onClick={handleResetAll}>全スポット入力リセット</button>
+          </div>
+
+          {/* エリア管理 */}
+          <Accordion title="エリア管理">
+            <AreaSettings
+              groups={groups}
+              spotCountDrafts={spotCountDrafts}
+              setSpotCountDrafts={setSpotCountDrafts}
+              onSpotCountChange={onSpotCountChange}
+              onVisibleChange={onVisibleChange}
+              onDeleteGroup={onDeleteGroup}
+              onAddGroup={onAddGroup}
+            />
+          </Accordion>
+        </aside>
 
         <Accordion title="エリア管理">
           <AreaSettings

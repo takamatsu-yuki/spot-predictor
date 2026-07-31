@@ -322,8 +322,14 @@ function App() {
     <>
       <Header onMenuClick={() => setMenuOpen(true)} />
       <Sidebar
+        // Sidebar の開閉は menuOpen で管理
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        // 全体設定の3つ
+        is24Hour={is24Hour}
+        setIs24Hour={setIs24Hour}
+        handleResetAll={handleResetAll}
+        // エリア管理のハンドラ
         groups={groups}
         spotCountDrafts={spotCountDrafts}
         setSpotCountDrafts={setSpotCountDrafts}
@@ -333,15 +339,6 @@ function App() {
         onAddGroup={handleAddGroup}
       />
 
-      <label className="event-options">
-        <input
-          type="checkbox"
-          checked={is24Hour}
-          onChange={(e) => setIs24Hour(e.target.checked)}
-        />
-        24時間開催イベント中
-      </label>
-      <button onClick={handleResetAll}>全スポット入力リセット</button>
       <ScheduleTable
         groups={visibleTables}
         now={now}
@@ -352,13 +349,6 @@ function App() {
         onResetSpot={handleResetSpot}
         onGroupNameChange={handleGroupNameChange}
       />
-      {/* {tables.map((group) => (
-        <SpotSetting
-          key={group.id}
-          spotNames={group.spotNames}
-          onSpotNameChange={handleSpotNameChange}
-        />
-      ))} */}
       <footer>ver 0.3.0</footer>
     </>
   );

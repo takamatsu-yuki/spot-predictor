@@ -98,3 +98,27 @@
 
   pointer-events: auto;
 }
+
+.sidebar-global-settings {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-bg);
+  color: var(--surface-text);
+}
+
+.sidebar-global-settings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sidebar-global-settings button {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  cursor: pointer;
+}
