@@ -44,7 +44,7 @@
   ブラウザ上端に固定する。
 */
 .schedule-table thead tr:first-child th {
-  top: 0;
+  top: var(--header-height);
   z-index: 15;
   height: var(--first-header-row-height);
   box-sizing: border-box;
@@ -55,7 +55,7 @@
   1行目の高さ分だけ下に固定する。
 */
 .schedule-table thead tr:nth-child(2) th {
-  top: var(--first-header-row-height);
+  top: calc(var(--header-height) + var(--first-header-row-height));
   z-index: 14;
 }
 
@@ -67,6 +67,7 @@
 .schedule-table thead tr:first-child th:first-child {
   left: 0;
   z-index: 30;
+  top: var(--header-height);
 }
 
 /* =========================

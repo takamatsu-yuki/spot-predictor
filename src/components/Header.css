@@ -7,6 +7,10 @@
   右にメニューボタンを配置する。
 */
 .app-header {
+  position: sticky; /* 上部に固定 */
+  top: 0; /* 固定位置 */
+  z-index: 1000; /* Sidebar より上に出す */
+
   display: flex;
   align-items: center;
 
