@@ -132,7 +132,7 @@ export default function ScheduleTable({
           ),
         );
 
-        const y = currentRowRef.current.offsetTop - headerHeight - 60;
+        const y = currentRowRef.current.offsetTop - headerHeight - 150;
 
         window.scrollTo({
           top: y,
