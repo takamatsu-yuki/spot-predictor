@@ -72,6 +72,7 @@ export default function ScheduleTable({
   onGroupNameChange,
 }: Props) {
   const currentRowRef = useRef<HTMLTableRowElement | null>(null);
+  const spotCount = groups.reduce((sum, g) => sum + g.spotCount, 0);
 
   function isCurrentRow(time: string): boolean {
     const current = now.getHours() * 60 + now.getMinutes();
@@ -143,111 +144,138 @@ export default function ScheduleTable({
   }, []);
 
   return (
-    <table className="schedule-table">
-      {/* 表のヘッダー部分 */}
-      <thead>
-        {/* 1行目 */}
-        <tr>
-          <th rowSpan={2}>時刻</th>
+    <div
+      className="grid-table"
+      style={
+        {
+          "--spot-count": spotCount,
+          "--row-count": groups[0]?.rows.length ?? 0,
+        } as React.CSSProperties
+      }
+    >
+      {/* 左上の交点セル */}
+      <div
+        className="grid-cell sticky-corner"
+        style={{ gridRow: "1 / span 2", gridColumn: 1 }}
+      >
+        時刻
+      </div>
 
-          {groups.map((group, groupIndex) => (
-            <th
-              key={group.id}
-              colSpan={group.spotCount}
-              className={groupIndex > 0 ? "group-start" : ""}
-            >
-              <input
-                type="text"
-                value={group.name}
-                aria-label="イベント名"
-                onChange={(e) => onGroupNameChange(group.id, e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur();
-                  }
-                }}
-              />
-            </th>
-          ))}
-        </tr>
+      {/* 1行目：イベント名（colSpan） */}
+      {groups.map((g, groupIndex) => {
+        const startColumn =
+          2 +
+          groups
+            .slice(0, groupIndex)
+            .reduce((sum, gg) => sum + gg.spotCount, 0);
 
-        {/* 2行目 */}
-        <tr>
-          {groups.map((group, groupIndex) =>
-            group.spotNames.map((spotName, i) => (
-              <th
-                key={`${group.id}-${i}`}
-                className={groupIndex > 0 && i === 0 ? "group-start" : ""}
-              >
-                <input
-                  type="text"
-                  value={spotName}
-                  onChange={(e) =>
-                    onSpotNameChange(group.id, i, e.target.value)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.currentTarget.blur();
-                    }
-                  }}
-                />
-
-                <button onClick={() => onResetSpot(group.id, i)}>×</button>
-              </th>
-            )),
-          )}
-        </tr>
-      </thead>
-
-      {/* 表の本体部分 */}
-      <tbody>
-        {groups[0]?.rows.map((row, index) => (
-          <tr
-            key={row.time}
-            ref={(el) => {
-              if (isCurrentRow(row.time)) {
-                currentRowRef.current = el;
-              }
+        return (
+          <div
+            key={g.id}
+            className={
+              "grid-cell sticky-top-1" + (groupIndex > 0 ? " group-start" : "")
+            }
+            style={{
+              gridRow: 1,
+              gridColumn: `${startColumn} / span ${g.spotCount}`,
             }}
-            className={[
-              isJoinTargetRow(row.time) ? "join-target-row" : "",
-              isCurrentRow(row.time) ? "current-row" : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
           >
-            <td>{row.time}</td>
+            <input
+              type="text"
+              value={g.name}
+              aria-label="イベント名"
+              onChange={(e) => onGroupNameChange(g.id, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.currentTarget.blur();
+              }}
+            />
+          </div>
+        );
+      })}
 
-            {groups.map((group, groupIndex) =>
-              group.rows[index].spots.map((active, i) => (
-                <td
-                  key={`${group.id}-${i}`}
-                  className={[
-                    active
+      {/* 2行目：Spot 名（グループごとに列位置をずらす） */}
+      {groups.map((g, groupIndex) =>
+        g.spotNames.map((name, spotIndex) => (
+          <div
+            key={`${g.id}-${spotIndex}`}
+            className={
+              "grid-cell sticky-top-2" +
+              (groupIndex > 0 && spotIndex === 0 ? " group-start" : "")
+            }
+            style={{
+              gridRow: 2,
+              gridColumn:
+                2 +
+                groups
+                  .slice(0, groupIndex)
+                  .reduce((sum, gg) => sum + gg.spotCount, 0) +
+                spotIndex,
+            }}
+          >
+            <input
+              type="text"
+              value={name}
+              onChange={(e) =>
+                onSpotNameChange(g.id, spotIndex, e.target.value)
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.currentTarget.blur();
+              }}
+            />
+            <button onClick={() => onResetSpot(g.id, spotIndex)}>×</button>
+          </div>
+        )),
+      )}
+
+      {/* 本体（行 3 以降） */}
+      {groups[0].rows.map((row, rowIndex) => {
+        const r = 3 + rowIndex;
+
+        const rowClass =
+          "grid-cell" +
+          (isCurrentRow(row.time) ? " current-row" : "") +
+          (isJoinTargetRow(row.time) ? " join-target-row" : "");
+
+        return (
+          <>
+            <div
+              className={rowClass + " sticky-left"}
+              style={{ gridRow: r, gridColumn: 1 }}
+            >
+              {row.time}
+            </div>
+
+            {groups.map((g, groupIndex) =>
+              g.rows[rowIndex].spots.map((active, spotIndex) => (
+                <div
+                  key={`${g.id}-${spotIndex}-${row.time}`}
+                  className={
+                    rowClass +
+                    (active
                       ? isJoinTargetRow(row.time)
-                        ? "active-cell join-target-cell"
-                        : "active-cell"
-                      : "",
-
-                    groupIndex > 0 && i === 0 ? "group-start" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onClick={() => onCellClick(group.id, row.time, i)}
-                  // onDoubleClick={() => {
-                  //   if (active) onJoinTime(row.time);
-                  // }}
-                  onDoubleClick={() => {
-                    onToggleStar(row.time, i + 1);
+                        ? " active-cell join-target-cell"
+                        : " active-cell"
+                      : "") +
+                    (groupIndex > 0 && spotIndex === 0 ? " group-start" : "")
+                  }
+                  style={{
+                    gridRow: r,
+                    gridColumn:
+                      2 +
+                      groups
+                        .slice(0, groupIndex)
+                        .reduce((sum, gg) => sum + gg.spotCount, 0) +
+                      spotIndex,
                   }}
+                  onClick={() => onCellClick(g.id, row.time, spotIndex)}
                 >
-                  {isStarred(row.time, i + 1) ? "★" : active ? "●" : ""}
-                </td>
+                  {active ? "●" : ""}
+                </div>
               )),
             )}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+          </>
+        );
+      })}
+    </div>
   );
 }

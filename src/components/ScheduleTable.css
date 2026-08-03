@@ -6,108 +6,6 @@
  */
 
 /* ============================================================
-   表全体の基本設定
-============================================================ */
-.schedule-table {
-  width: 100%;
-  isolation: isolate;
-  --first-header-row-height: 44px;
-}
-
-.schedule-table th,
-.schedule-table td {
-  border: 1px solid var(--border);
-  padding: 8px;
-  text-align: center;
-}
-
-/* =========================
-   ヘッダー固定
-========================= */
-
-/*
-  1行目ヘッダーの高さ。
-  2行目を固定する開始位置にも使う。
-  表示がずれる場合は、この44pxを調整する。
-*/
-.schedule-table {
-  isolation: isolate;
-  --first-header-row-height: 44px;
-}
-
-/*
-  ヘッダー全体の共通設定。
-  topは行ごとに別途指定する。
-  ヘッダーは表本体より前に表示する。
-  sticky時に●や★がヘッダー上へ重ならないようにする。
-*/
-.schedule-table thead th {
-  position: sticky;
-  background-color: var(--code-bg);
-  color: var(--text-h);
-  z-index: 20;
-}
-
-/*
-  1行目: イベント名のヘッダー。
-  ブラウザ上端に固定する。
-  1行目のイベント名ヘッダーは、
-  2行目よりさらに前に置く。
-*/
-.schedule-table thead tr:first-child th {
-  top: var(--header-height);
-  z-index: 21;
-  height: var(--first-header-row-height);
-  box-sizing: border-box;
-}
-
-/*
-  2行目: Spot名のヘッダー。
-  1行目の高さ分だけ下に固定する。
-  2行目ヘッダーも表本体より前、かつ1行目よりは後ろに置く。
-*/
-.schedule-table thead tr:nth-child(2) th {
-  top: calc(var(--header-height) + var(--first-header-row-height));
-  z-index: 20;
-}
-
-/*
-  左上の「時刻」セル。
-  縦スクロール・横スクロールの両方で
-  ほかのセルより手前に表示する。
-*/
-.schedule-table thead tr:first-child th:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 30;
-  top: var(--header-height);
-}
-
-/* =========================
-   時刻列固定
-========================= */
-
-/*
-  表本体の時刻列だけを左固定する。
-  td:first-child は各行の「時刻」セルだけに一致する。
-*/
-.schedule-table tbody td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 5;
-  background-color: var(--bg);
-}
-
-/*
-  表本体のセルは、ヘッダーより後ろに置く。
-  通常セル・●セル・★セルすべてに適用される。
-*/
-.schedule-table tbody td {
-  position: relative;
-  z-index: 0;
-}
-
-/* ============================================================
    現在時刻表示　&　次回参加可能枠
 ============================================================ */
 
@@ -177,4 +75,243 @@
 
 .schedule-table .group-start {
   border-left: 3px solid #3b82f6;
+}
+
+/* ============================================================
+   表全体
+============================================================ */
+.grid-table {
+  display: grid;
+  --first-header-row-height: 20px;
+
+  /* 左端：時刻列 / それ以降：Spot列 */
+  grid-template-columns: 80px repeat(var(--spot-count), minmax(70px, 1fr));
+
+  /* 1行目、2行目、本体 */
+  grid-template-rows:
+    var(--first-header-row-height)
+    30px
+    repeat(var(--row-count), 30px);
+
+  /* Spot数が多い場合は表を横に広げる */
+  min-width: max-content;
+
+  margin-top: var(--header-height);
+
+  /*
+    Grid内のz-indexを独立させる。
+    表外の要素との重なりも管理しやすくする。
+  */
+  isolation: isolate;
+}
+
+/* ============================================================
+   共通セル
+============================================================ */
+
+.grid-cell {
+  box-sizing: border-box;
+
+  border: 1px solid var(--border);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+
+  background-color: var(--bg);
+}
+
+/* ============================================================
+   ヘッダー
+============================================================ */
+
+/* 1行目：イベント名 */
+.sticky-top-1 {
+  position: sticky;
+  top: var(--header-height);
+
+  z-index: 20;
+
+  background-color: var(--code-bg);
+  color: var(--text-h);
+}
+
+/* 2行目：Spot名 */
+.sticky-top-2 {
+  position: sticky;
+
+  top: calc(var(--header-height) + var(--first-header-row-height));
+
+  z-index: 20;
+
+  min-width: 0;
+
+  background-color: var(--code-bg);
+  color: var(--text-h);
+}
+
+/* 左列固定 */
+.sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 30;
+  background: var(--bg);
+}
+
+/* 左上：時刻 */
+.sticky-corner {
+  position: sticky;
+
+  top: var(--header-height);
+  left: 0;
+
+  z-index: 40;
+
+  background-color: var(--code-bg);
+  color: var(--text-h);
+}
+
+/* ============================================================
+   ヘッダーの入力欄
+============================================================ */
+
+/* 1行目：イベント名 */
+.sticky-top-1 input {
+  width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--text-h);
+
+  font-weight: bold;
+}
+
+/* 2行目：Spot名 */
+.sticky-top-2 input {
+  /*
+    ×ボタン以外の残り幅を使用する。
+    width: 100% だとボタンを押し出す。
+  */
+  flex: 1;
+
+  width: 0;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--text-h);
+
+  font-weight: bold;
+}
+
+/* ×ボタン */
+.sticky-top-2 button {
+  flex: 0 0 auto;
+}
+
+/* 入力中 */
+.sticky-top-1 input:focus,
+.sticky-top-2 input:focus {
+  outline: 1px solid #4a90e2;
+
+  background: var(--bg);
+}
+
+/* ============================================================
+   現在時刻
+============================================================ */
+/*
+  現在時刻の行全体。
+  旧版の紫の上下線をGrid版でも再現する。
+*/
+.current-row {
+  border-top: 3px solid #a855f7;
+  border-bottom: 3px solid #a855f7;
+}
+
+/*
+  現在時刻の時刻セルだけ紫。
+*/
+.current-row.sticky-left {
+  background-color: purple;
+
+  color: white;
+
+  font-weight: bold;
+
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* ============================================================
+   次回参加可能時刻
+============================================================ */
+
+/*
+  次回参加可能時刻の行全体。
+*/
+.join-target-row {
+  border-top: 3px solid gold;
+  border-bottom: 3px solid gold;
+}
+
+/*
+  次回参加可能時刻の時刻セルだけ金色。
+*/
+.join-target-row.sticky-left {
+  background-color: gold;
+
+  color: black;
+
+  font-weight: bold;
+
+  box-shadow: inset 0 0 0 3px #fff8dc;
+}
+
+/* ============================================================
+   アクティブセル
+============================================================ */
+
+.active-cell {
+  background-color: #90ee90;
+
+  font-weight: bold;
+}
+
+/* 次回参加可能かつアクティブなセル */
+.join-target-cell {
+  box-shadow: inset 0 0 0 3px gold;
+}
+
+/* ============================================================
+   グループ境界線
+============================================================ */
+
+.group-start {
+  border-left: 3px solid #3b82f6;
+}
+
+/* ============================================================
+   スクロール領域
+============================================================ */
+
+.table-scroll-area {
+  height: calc(100vh - var(--header-height));
+
+  overflow: auto;
 }
