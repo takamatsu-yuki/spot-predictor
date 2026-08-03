@@ -71,7 +71,7 @@ export default function ScheduleTable({
   onResetSpot,
   onGroupNameChange,
 }: Props) {
-  const currentRowRef = useRef<HTMLTableRowElement | null>(null);
+  const currentRowRef = useRef<HTMLDivElement | null>(null);
   const spotCount = groups.reduce((sum, g) => sum + g.spotCount, 0);
 
   function isCurrentRow(time: string): boolean {
@@ -239,6 +239,11 @@ export default function ScheduleTable({
         return (
           <>
             <div
+              ref={(el) => {
+                if (isCurrentRow(row.time)) {
+                  currentRowRef.current = el;
+                }
+              }}
               className={rowClass + " sticky-left"}
               style={{ gridRow: r, gridColumn: 1 }}
             >

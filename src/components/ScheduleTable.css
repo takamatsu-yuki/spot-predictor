@@ -305,13 +305,3 @@
 .group-start {
   border-left: 3px solid #3b82f6;
 }
-
-/* ============================================================
-   スクロール領域
-============================================================ */
-
-.table-scroll-area {
-  height: calc(100vh - var(--header-height));
-
-  overflow: auto;
-}
