@@ -25,7 +25,7 @@
   width: 100%;
   
   /* Spot数が多い場合は表を横に広げる */
-  min-width: max-content;
+  min-width: fit-content;
 
   margin-top: var(--header-height);
 
