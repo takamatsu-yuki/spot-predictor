@@ -53,7 +53,7 @@ function App() {
   const [is24Hour, setIs24Hour] = useState(false);
 
   // ★マーク一覧
-  const [starredMarks, setStarredMarks] = useState<JoinedMark[]>([]);
+  const [joinedMarks, setJoinedMarks] = useState<JoinedMark[]>([]);
 
   // 保存復元完了
   const [loaded, setLoaded] = useState(false);
@@ -84,7 +84,7 @@ function App() {
     if (data && Array.isArray(data.groups)) {
       setGroups(data.groups);
       setIs24Hour(data.is24Hour ?? false);
-      setStarredMarks(data.starredMarks ?? []);
+      setJoinedMarks(data.joinedMarks ?? []);
     }
 
     setLoaded(true);
@@ -104,9 +104,9 @@ function App() {
     saveData({
       groups,
       is24Hour,
-      starredMarks,
+      joinedMarks,
     });
-  }, [loaded, groups, is24Hour, starredMarks]);
+  }, [loaded, groups, is24Hour, joinedMarks]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -248,7 +248,7 @@ function App() {
     );
 
     // Spot数変更時は参加履歴もリセット
-    setStarredMarks([]);
+    setJoinedMarks([]);
   }
 
   function handleDeleteGroup(groupId: string) {
@@ -276,11 +276,11 @@ function App() {
       })),
     );
 
-    setStarredMarks([]);
+    setJoinedMarks([]);
   }
 
-  function handleToggleStar(time: string) {
-    setStarredMarks((old) => {
+  function handleToggleJoined(time: string) {
+    setJoinedMarks((old) => {
       const exists = old.some((mark) => mark.time === time);
 
       // 同じ時刻なら参加記録を削除
@@ -335,8 +335,8 @@ function App() {
       <ScheduleTable
         groups={visibleTables}
         now={now}
-        starredMarks={starredMarks}
-        onToggleStar={handleToggleStar}
+        joinedMarks={joinedMarks}
+        onToggleJoined={handleToggleJoined}
         onCellClick={handleCellClick}
         onSpotNameChange={handleSpotNameChange}
         onResetSpot={handleResetSpot}

@@ -47,9 +47,9 @@ export interface SaveData {
   // グループ一覧
   groups: SpotGroup[];
 
-  // 24時間イベントか（全体共通）
+  // 24時間イベントか
   is24Hour: boolean;
 
-  // ★を付けた時刻一覧
-  starredMarks: JoinedMark[];
+  // 参加した時刻一覧
+  joinedMarks: JoinedMark[];
 }

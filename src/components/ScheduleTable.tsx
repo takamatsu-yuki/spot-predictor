@@ -51,8 +51,8 @@ type Props = {
   onResetSpot: (groupId: string, spotIndex: number) => void;
   onGroupNameChange: (groupId: string, name: string) => void;
 
-  starredMarks: JoinedMark[];
-  onToggleStar: (time: string) => void;
+  joinedMarks: JoinedMark[];
+  onToggleJoined: (time: string) => void;
 };
 
 /**
@@ -64,8 +64,8 @@ type Props = {
 export default function ScheduleTable({
   groups,
   now,
-  starredMarks,
-  onToggleStar,
+  joinedMarks,
+  onToggleJoined,
   onCellClick,
   onSpotNameChange,
   onResetSpot,
@@ -92,16 +92,16 @@ export default function ScheduleTable({
     });
   }
 
-  function isStarred(time: string): boolean {
-    return starredMarks.some((mark) => mark.time === time);
+  function isJoined(time: string): boolean {
+    return joinedMarks.some((mark) => mark.time === time);
   }
 
   function getJoinTargetTimes(): number[] {
-    if (starredMarks.length === 0) {
+    if (joinedMarks.length === 0) {
       return [];
     }
 
-    const latest = starredMarks.reduce((latest, current) =>
+    const latest = joinedMarks.reduce((latest, current) =>
       timeToMinutes(current.time) > timeToMinutes(latest.time)
         ? current
         : latest,
@@ -271,9 +271,9 @@ export default function ScheduleTable({
                       spotIndex,
                   }}
                   onClick={() => onCellClick(g.id, row.time, spotIndex)}
-                  onDoubleClick={() => onToggleStar(row.time)}
+                  onDoubleClick={() => onToggleJoined(row.time)}
                 >
-                  {active ? (isStarred(row.time) ? "★" : "●") : ""}
+                  {active ? (isJoined(row.time) ? "★" : "●") : ""}
                 </div>
               )),
             )}
