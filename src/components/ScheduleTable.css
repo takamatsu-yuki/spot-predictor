@@ -13,16 +13,16 @@
   --first-header-row-height: 20px;
 
   /* 左端：時刻列 / それ以降：Spot列 */
-  grid-template-columns: 80px repeat(var(--spot-count), minmax(70px, 1fr));
+  grid-template-columns: 60px repeat(var(--spot-count), minmax(30px, 0.8fr));
+
 
   /* 1行目、2行目、本体 */
   grid-template-rows:
     var(--first-header-row-height)
-    30px
+    44px
     repeat(var(--row-count), 30px);
 
-  /* Spot数が多い場合は表を横に広げる */
-  min-width: max-content;
+  width: 100%;
 
   margin-top: var(--header-height);
 
@@ -108,14 +108,14 @@
   font-weight: bold;
 }
 
-/* 2行目：Spot名 */
+/* 2行目：Spot名セル */
+.sticky-top-2 {
+  flex-direction: column;
+}
+
+/* Spot名入力欄 */
 .sticky-top-2 input {
-  /*
-    ×ボタン以外の残り幅を使用する。
-    width: 100% だとボタンを押し出す。
-  */
-  flex: 1;
-  width: 0;
+  width: 100%;
   min-width: 0;
   box-sizing: border-box;
   text-align: center;
@@ -137,8 +137,6 @@
 
   background: var(--bg);
 }
-
-
 
 /* ============================================================
    現在時刻表示　&　次回参加可能枠
