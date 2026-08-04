@@ -201,8 +201,6 @@ function App() {
         };
       }),
     );
-
-    setStarredMarks((old) => old.filter((mark) => mark.spot !== spotNumber));
   }
 
   function handleAddGroup() {
@@ -281,25 +279,20 @@ function App() {
     setStarredMarks([]);
   }
 
-  function handleToggleStar(time: string, spot: number) {
+  function handleToggleStar(time: string) {
     setStarredMarks((old) => {
-      const exists = old.some(
-        (mark) => mark.time === time && mark.spot === spot,
-      );
+      const exists = old.some((mark) => mark.time === time);
 
-      // 同じセルなら削除
+      // 同じ時刻なら参加記録を削除
       if (exists) {
-        return old.filter(
-          (mark) => !(mark.time === time && mark.spot === spot),
-        );
+        return old.filter((mark) => mark.time !== time);
       }
 
-      // 同じ時刻の★を消してから追加
+      // 時刻単位で参加記録を追加
       return [
-        ...old.filter((mark) => mark.time !== time),
+        ...old,
         {
           time,
-          spot,
         },
       ];
     });

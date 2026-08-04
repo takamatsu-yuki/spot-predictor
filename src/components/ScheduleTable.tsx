@@ -52,7 +52,7 @@ type Props = {
   onGroupNameChange: (groupId: string, name: string) => void;
 
   starredMarks: JoinedMark[];
-  onToggleStar: (time: string, spot: number) => void;
+  onToggleStar: (time: string) => void;
 };
 
 /**
@@ -92,10 +92,8 @@ export default function ScheduleTable({
     });
   }
 
-  function isStarred(time: string, spot: number): boolean {
-    return starredMarks.some(
-      (mark) => mark.time === time && mark.spot === spot,
-    );
+  function isStarred(time: string): boolean {
+    return starredMarks.some((mark) => mark.time === time);
   }
 
   function getJoinTargetTimes(): number[] {
@@ -273,8 +271,9 @@ export default function ScheduleTable({
                       spotIndex,
                   }}
                   onClick={() => onCellClick(g.id, row.time, spotIndex)}
+                  onDoubleClick={() => onToggleStar(row.time)}
                 >
-                  {active ? "●" : ""}
+                  {active ? (isStarred(row.time) ? "★" : "●") : ""}
                 </div>
               )),
             )}

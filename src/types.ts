@@ -18,8 +18,8 @@ export interface InputData {
 }
 
 export type JoinedMark = {
+  // 参加した時刻
   time: string;
-  spot: number;
 };
 
 // 1つのイベントグループ
