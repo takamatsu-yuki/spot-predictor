@@ -13,7 +13,7 @@
   --first-header-row-height: 20px;
 
   /* 左端：時刻列 / それ以降：Spot列 */
-  grid-template-columns: 60px repeat(var(--spot-count), minmax(30px, 0.3fr));
+  grid-template-columns: 60px repeat(var(--spot-count), minmax(30px, 1fr));
 
 
   /* 1行目、2行目、本体 */
@@ -22,10 +22,10 @@
     44px
     repeat(var(--row-count), 30px);
 
-  width: 100%;
+  /* width: 100%; */
   
   /* Spot数が多い場合は表を横に広げる */
-  min-width: max-content;
+  min-width: fit-content;
 
   margin-top: var(--header-height);
 
