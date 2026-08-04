@@ -6,78 +6,6 @@
  */
 
 /* ============================================================
-   現在時刻表示　&　次回参加可能枠
-============================================================ */
-
-.join-target-cell {
-  box-shadow: inset 0 0 0 3px gold;
-}
-
-/* 次回参加可能時刻の時刻セルを金色にする */
-.schedule-table tbody tr.join-target-row td:first-child {
-  background-color: gold;
-  color: black;
-  font-weight: bold;
-  box-shadow: inset 0 0 0 3px #fff8dc;
-}
-
-/* 現在時刻の時刻セルだけ紫 */
-.schedule-table tbody tr.current-row td:first-child {
-  background: purple;
-  color: white;
-  font-weight: bold;
-  box-shadow: inset 0 0 0 3px white;
-}
-
-/* 現在時刻の行全体を上下の紫線で囲む */
-.schedule-table tbody tr.current-row td {
-  border-top: 3px solid #a855f7;
-  border-bottom: 3px solid #a855f7;
-}
-
-/* 次回参加可能時刻の行全体を金色ラインで囲む */
-.schedule-table tbody tr.join-target-row td {
-  border-top: 3px solid gold;
-  border-bottom: 3px solid gold;
-}
-
-/* ============================================================
-   アクティブセル
-============================================================ */
-
-.active-cell {
-  background-color: #90ee90;
-  font-weight: bold;
-}
-
-/* ============================================================
-   Spot名入力欄
-============================================================ */
-
-.schedule-table th input {
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  border: none;
-  background: transparent;
-  color: var(--text-h);
-  font-weight: bold;
-}
-
-.schedule-table th input:focus {
-  outline: 1px solid #4a90e2;
-  background: var(--bg);
-}
-
-/* ============================================================
-   グループ境界線
-============================================================ */
-
-.schedule-table .group-start {
-  border-left: 3px solid #3b82f6;
-}
-
-/* ============================================================
    表全体
 ============================================================ */
 .grid-table {
@@ -131,9 +59,7 @@
 .sticky-top-1 {
   position: sticky;
   top: var(--header-height);
-
   z-index: 20;
-
   background-color: var(--code-bg);
   color: var(--text-h);
 }
@@ -141,13 +67,9 @@
 /* 2行目：Spot名 */
 .sticky-top-2 {
   position: sticky;
-
   top: calc(var(--header-height) + var(--first-header-row-height));
-
   z-index: 20;
-
   min-width: 0;
-
   background-color: var(--code-bg);
   color: var(--text-h);
 }
@@ -163,12 +85,9 @@
 /* 左上：時刻 */
 .sticky-corner {
   position: sticky;
-
   top: var(--header-height);
   left: 0;
-
   z-index: 40;
-
   background-color: var(--code-bg);
   color: var(--text-h);
 }
@@ -180,19 +99,12 @@
 /* 1行目：イベント名 */
 .sticky-top-1 input {
   width: 100%;
-
   min-width: 0;
-
   box-sizing: border-box;
-
   text-align: center;
-
   border: none;
-
   background: transparent;
-
   color: var(--text-h);
-
   font-weight: bold;
 }
 
@@ -203,20 +115,13 @@
     width: 100% だとボタンを押し出す。
   */
   flex: 1;
-
   width: 0;
   min-width: 0;
-
   box-sizing: border-box;
-
   text-align: center;
-
   border: none;
-
   background: transparent;
-
   color: var(--text-h);
-
   font-weight: bold;
 }
 
@@ -233,54 +138,43 @@
   background: var(--bg);
 }
 
+
+
 /* ============================================================
-   現在時刻
+   現在時刻表示　&　次回参加可能枠
 ============================================================ */
-/*
-  現在時刻の行全体。
-  旧版の紫の上下線をGrid版でも再現する。
-*/
+
+/* 次回参加可能かつアクティブなセル */
+.join-target-cell {
+  box-shadow: inset 0 0 0 3px gold;
+}
+
+/* 次回参加可能時刻の時刻セルを金色にする */
+.join-target-row.sticky-left {
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  box-shadow: inset 0 0 0 3px #fff8dc;
+}
+
+/* 現在時刻の時刻セルだけ紫 */
+.current-row.sticky-left {
+  background-color: purple;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* 現在時刻の行全体を上下の紫線で囲む */
 .current-row {
   border-top: 3px solid #a855f7;
   border-bottom: 3px solid #a855f7;
 }
 
-/*
-  現在時刻の時刻セルだけ紫。
-*/
-.current-row.sticky-left {
-  background-color: purple;
-
-  color: white;
-
-  font-weight: bold;
-
-  box-shadow: inset 0 0 0 3px white;
-}
-
-/* ============================================================
-   次回参加可能時刻
-============================================================ */
-
-/*
-  次回参加可能時刻の行全体。
-*/
+/* 次回参加可能時刻の行全体を金色ラインで囲む */
 .join-target-row {
   border-top: 3px solid gold;
   border-bottom: 3px solid gold;
-}
-
-/*
-  次回参加可能時刻の時刻セルだけ金色。
-*/
-.join-target-row.sticky-left {
-  background-color: gold;
-
-  color: black;
-
-  font-weight: bold;
-
-  box-shadow: inset 0 0 0 3px #fff8dc;
 }
 
 /* ============================================================
@@ -289,7 +183,6 @@
 
 .active-cell {
   background-color: #90ee90;
-
   font-weight: bold;
 }
 
