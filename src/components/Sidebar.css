@@ -8,7 +8,11 @@
   right: -320px;
 
   width: 320px;
-  height: 100vh;
+  height: 100dvh;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
 
   background: var(--surface-bg);
   color: var(--surface-text);
