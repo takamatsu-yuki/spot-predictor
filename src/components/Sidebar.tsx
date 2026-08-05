@@ -65,6 +65,7 @@ export default function Sidebar({
       />
 
       <aside className={`sidebar ${open ? "open" : ""}`}>
+        {/* サイドバー上部 */}
         <div className="sidebar-header">
           <h2>メニュー</h2>
 
@@ -73,42 +74,23 @@ export default function Sidebar({
           </button>
         </div>
 
-        <aside className={`sidebar ${open ? "open" : ""}`}>
-          <div className="sidebar-header">
-            <h2>メニュー</h2>
-            <button className="sidebar-close" onClick={onClose}>
-              ×
-            </button>
-          </div>
-
-          {/* 全体設定 */}
-          <div className="sidebar-global-settings">
-            <label className="event-options">
-              <input
-                type="checkbox"
-                checked={is24Hour}
-                onChange={(e) => setIs24Hour(e.target.checked)}
-              />
-              24時間開催イベント中
-            </label>
-
-            <button onClick={handleResetAll}>全スポット入力リセット</button>
-          </div>
-
-          {/* エリア管理 */}
-          <Accordion title="エリア管理">
-            <AreaSettings
-              groups={groups}
-              spotCountDrafts={spotCountDrafts}
-              setSpotCountDrafts={setSpotCountDrafts}
-              onSpotCountChange={onSpotCountChange}
-              onVisibleChange={onVisibleChange}
-              onDeleteGroup={onDeleteGroup}
-              onAddGroup={onAddGroup}
+        {/* 全体設定 */}
+        <div className="sidebar-global-settings">
+          <label className="event-options">
+            <input
+              type="checkbox"
+              checked={is24Hour}
+              onChange={(e) => setIs24Hour(e.target.checked)}
             />
-          </Accordion>
-        </aside>
+            24時間開催イベント中
+          </label>
 
+          <button type="button" onClick={handleResetAll}>
+            全スポット入力リセット
+          </button>
+        </div>
+
+        {/* エリア管理 */}
         <Accordion title="エリア管理">
           <AreaSettings
             groups={groups}
