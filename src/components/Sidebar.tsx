@@ -65,7 +65,7 @@ export default function Sidebar({
       />
 
       <aside className={`sidebar ${open ? "open" : ""}`}>
-        {/* サイドバー上部 */}
+        {/* 固定ヘッダー */}
         <div className="sidebar-header">
           <h2>メニュー</h2>
 
@@ -74,34 +74,37 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* 全体設定 */}
-        <div className="sidebar-global-settings">
-          <label className="event-options">
-            <input
-              type="checkbox"
-              checked={is24Hour}
-              onChange={(e) => setIs24Hour(e.target.checked)}
+        {/* スクロールする部分 */}
+        <div className="sidebar-content">
+          {/* 全体設定 */}
+          <div className="sidebar-global-settings">
+            <label className="event-options">
+              <input
+                type="checkbox"
+                checked={is24Hour}
+                onChange={(e) => setIs24Hour(e.target.checked)}
+              />
+              24時間開催イベント中
+            </label>
+
+            <button type="button" onClick={handleResetAll}>
+              全スポット入力リセット
+            </button>
+          </div>
+
+          {/* エリア管理 */}
+          <Accordion title="エリア管理">
+            <AreaSettings
+              groups={groups}
+              spotCountDrafts={spotCountDrafts}
+              setSpotCountDrafts={setSpotCountDrafts}
+              onSpotCountChange={onSpotCountChange}
+              onVisibleChange={onVisibleChange}
+              onDeleteGroup={onDeleteGroup}
+              onAddGroup={onAddGroup}
             />
-            24時間開催イベント中
-          </label>
-
-          <button type="button" onClick={handleResetAll}>
-            全スポット入力リセット
-          </button>
+          </Accordion>
         </div>
-
-        {/* エリア管理 */}
-        <Accordion title="エリア管理">
-          <AreaSettings
-            groups={groups}
-            spotCountDrafts={spotCountDrafts}
-            setSpotCountDrafts={setSpotCountDrafts}
-            onSpotCountChange={onSpotCountChange}
-            onVisibleChange={onVisibleChange}
-            onDeleteGroup={onDeleteGroup}
-            onAddGroup={onAddGroup}
-          />
-        </Accordion>
       </aside>
     </>
   );

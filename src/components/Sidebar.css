@@ -10,8 +10,13 @@
   width: 320px;
   height: 100dvh;
 
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* ヘッダーと内容を縦に並べる */
+  display: flex;
+  flex-direction: column;
+
+  /* サイドバー全体はスクロールさせない */
+  overflow: hidden;
+
   box-sizing: border-box;
 
   background: var(--surface-bg);
@@ -22,6 +27,21 @@
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
 
   z-index: 1000;
+}
+
+/* サイドバーの内容部分だけスクロール */
+.sidebar-content {
+  flex: 1;
+
+  /*
+    Flexbox内でスクロールを有効にするために重要。
+    これがないと内容の高さに押されて、
+    overflow-yが期待どおり動かない場合がある。
+  */
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* サイドバー表示 */
@@ -39,10 +59,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 60px;
 
-  padding: 16px 20px;
+  padding: 0 20px;
   background-color: var(--brand-bg);
   color: var(--brand-text);
+  box-sizing: border-box;
 
   border-bottom: 1px solid #ddd;
 }
