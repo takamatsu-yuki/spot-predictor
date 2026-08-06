@@ -143,6 +143,9 @@ export default function ScheduleTable({
 
   const maxRows = Math.max(...groups.map((g) => g.rows.length));
 
+  if (groups.length === 0) {
+    return <div className="grid-table empty">表示エリアがありません</div>;
+  }
   return (
     <div
       className="grid-table"
