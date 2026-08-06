@@ -99,13 +99,28 @@ function App() {
       setGroups(data.groups);
       setIs24Hour(data.is24Hour ?? false);
       setJoinedMarks(data.joinedMarks ?? []);
-      setLastResetDate(data.lastResetDate ?? "");
 
-      if (data.lastResetDate !== today) {
-        if (confirm("日付が変わりました。全グループの観測データをリセットしますか？")) {
+      // 初回起動（lastResetDate が空）の場合は今日で初期化
+      const savedDate = data.lastResetDate ?? "";
+      if (!savedDate) {
+        setLastResetDate(today);
+      } else {
+        setLastResetDate(savedDate);
+      }
+
+      // 日付が変わっていたら通知
+      if (savedDate !== today) {
+        const ok = confirm(
+          "日付が変わりました。全エリアの観測データをリセットしますか？",
+        );
+
+        if (ok) {
           resetAllData();
-          setLastResetDate(today);
         }
+
+        // OK/Cancel に関わらず「今日の日付」を保存する
+        // → キャンセルした日にはもう通知が出ない
+        setLastResetDate(today);
       }
     }
 
