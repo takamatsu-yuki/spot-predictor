@@ -52,4 +52,7 @@ export interface SaveData {
 
   // 参加した時刻一覧
   joinedMarks: JoinedMark[];
+
+  // 最後にリセットした日付
+  lastResetDate: string;
 }

@@ -63,6 +63,8 @@ function App() {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [lastResetDate, setLastResetDate] = useState("");
+
   /*
     Spot数入力欄で、入力途中の文字列を保持する。
     例: 「6」を入力する途中で、一時的に空欄にできる。
@@ -75,16 +77,36 @@ function App() {
    * 起動時に保存データを復元する。
    */
   useEffect(() => {
-    const data = loadData();
-
     /*
       新形式の保存データだけ復元する。
       ver 0.10以前のデータは無視し、初期状態から始める。
     */
+    const data = loadData();
+    const today = new Date().toISOString().slice(0, 10);
+
+    function resetAllData() {
+      setGroups((old) =>
+        old.map((group) => ({
+          ...group,
+          inputs: [],
+        })),
+      );
+
+      setJoinedMarks([]);
+    }
+
     if (data && Array.isArray(data.groups)) {
       setGroups(data.groups);
       setIs24Hour(data.is24Hour ?? false);
       setJoinedMarks(data.joinedMarks ?? []);
+      setLastResetDate(data.lastResetDate ?? "");
+
+      if (data.lastResetDate !== today) {
+        if (confirm("日付が変わりました。全グループの観測データをリセットしますか？")) {
+          resetAllData();
+          setLastResetDate(today);
+        }
+      }
     }
 
     setLoaded(true);
@@ -105,8 +127,9 @@ function App() {
       groups,
       is24Hour,
       joinedMarks,
+      lastResetDate,
     });
-  }, [loaded, groups, is24Hour, joinedMarks]);
+  }, [loaded, groups, is24Hour, joinedMarks, lastResetDate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -265,7 +288,7 @@ function App() {
   }
 
   function handleResetAll() {
-    if (!confirm("全グループの観測データを削除しますか？")) {
+    if (!confirm("全グループの観測データをリセットしますか？")) {
       return;
     }
 
