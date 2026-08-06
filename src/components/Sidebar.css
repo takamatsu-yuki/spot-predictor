@@ -42,6 +42,7 @@
 
   overflow-y: auto;
   overflow-x: hidden;
+  padding-bottom: 40px;
 }
 
 /* サイドバー表示 */

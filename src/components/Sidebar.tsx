@@ -59,11 +59,13 @@ export default function Sidebar({
 }: Props) {
   return (
     <>
+      {/* サイドバーの外側を覆う背景 */}
       <div
         className={`sidebar-overlay ${open ? "open" : ""}`}
         onClick={onClose}
       />
 
+      {/* サイドバー本体 */}
       <aside className={`sidebar ${open ? "open" : ""}`}>
         {/* 固定ヘッダー */}
         <div className="sidebar-header">
@@ -74,7 +76,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* スクロールする部分 */}
+        {/* ↓ここからスクロールする中身 */}
         <div className="sidebar-content">
           {/* 全体設定 */}
           <div className="sidebar-global-settings">
@@ -87,9 +89,7 @@ export default function Sidebar({
               24時間開催イベント中
             </label>
 
-            <button type="button" onClick={handleResetAll}>
-              全スポット入力リセット
-            </button>
+            <button onClick={handleResetAll}>全スポット入力リセット</button>
           </div>
 
           {/* エリア管理 */}
@@ -105,6 +105,7 @@ export default function Sidebar({
             />
           </Accordion>
         </div>
+        {/* ↑ここまでスクロールする中身 */}
       </aside>
     </>
   );
