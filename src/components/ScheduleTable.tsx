@@ -141,6 +141,8 @@ export default function ScheduleTable({
     }, 100);
   }, []);
 
+  const maxRows = Math.max(...groups.map((g) => g.rows.length));
+
   return (
     <div
       className="grid-table"
@@ -226,36 +228,39 @@ export default function ScheduleTable({
       )}
 
       {/* 本体（行 3 以降） */}
-      {groups[0].rows.map((row, rowIndex) => {
+      {Array.from({ length: maxRows }).map((_, rowIndex) => {
+        const row = groups[0].rows[rowIndex];
         const r = 3 + rowIndex;
 
         const rowClass =
           "grid-cell" +
-          (isCurrentRow(row.time) ? " current-row" : "") +
-          (isJoinTargetRow(row.time) ? " join-target-row" : "");
+          (row && isCurrentRow(row.time) ? " current-row" : "") +
+          (row && isJoinTargetRow(row.time) ? " join-target-row" : "");
 
         return (
           <>
+            {/* 時刻セル */}
             <div
               ref={(el) => {
-                if (isCurrentRow(row.time)) {
+                if (row && isCurrentRow(row.time)) {
                   currentRowRef.current = el;
                 }
               }}
               className={rowClass + " sticky-left"}
               style={{ gridRow: r, gridColumn: 1 }}
             >
-              {row.time}
+              {row?.time ?? ""}
             </div>
 
+            {/* Spotセル */}
             {groups.map((g, groupIndex) =>
-              g.rows[rowIndex].spots.map((active, spotIndex) => (
+              g.rows[rowIndex]?.spots.map((active, spotIndex) => (
                 <div
-                  key={`${g.id}-${spotIndex}-${row.time}`}
+                  key={`${g.id}-${spotIndex}-${row?.time}`}
                   className={
                     rowClass +
                     (active
-                      ? isJoinTargetRow(row.time)
+                      ? isJoinTargetRow(row?.time ?? "")
                         ? " active-cell join-target-cell"
                         : " active-cell"
                       : "") +
@@ -270,10 +275,10 @@ export default function ScheduleTable({
                         .reduce((sum, gg) => sum + gg.spotCount, 0) +
                       spotIndex,
                   }}
-                  onClick={() => onCellClick(g.id, row.time, spotIndex)}
-                  onDoubleClick={() => onToggleJoined(row.time)}
+                  onClick={() => onCellClick(g.id, row?.time ?? "", spotIndex)}
+                  onDoubleClick={() => onToggleJoined(row?.time ?? "")}
                 >
-                  {active ? (isJoined(row.time) ? "★" : "●") : ""}
+                  {active ? (isJoined(row?.time ?? "") ? "★" : "●") : ""}
                 </div>
               )),
             )}
