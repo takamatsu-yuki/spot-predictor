@@ -47,17 +47,17 @@ export function saveData(data: SaveData): void {
 export function loadData(): SaveData | null {
   const saved = localStorage.getItem(STORAGE_KEY);
 
-  console.log("LOAD:", saved);
-
   if (!saved) {
+    console.log("LOAD: (no data)");
     return null;
   }
 
   try {
     const data = JSON.parse(saved);
-
+    console.log("LOAD:", data);
     return data as SaveData;
-  } catch {
+  } catch (e) {
+    console.log("LOAD: error", e);
     return null;
   }
 }
