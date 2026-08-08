@@ -27,14 +27,15 @@
  * が担当する。
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ScheduleTable from "./components/ScheduleTable";
-import { buildSchedule } from "./utils/scheduleBuilder";
 import type { SpotGroup, JoinedMark } from "./types";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { useDateReset } from "./hooks/useDateReset";
 import { useGroups } from "./hooks/useGroups";
+import { useNow } from "./hooks/useNow";
+import { useVisibleTables } from "./hooks/useVisibleTables";
 
 function App() {
   // イベントグループ一覧
@@ -56,9 +57,6 @@ function App() {
 
   // 保存復元完了
   const [loaded, setLoaded] = useState(false);
-
-  // 現在時刻
-  const [now, setNow] = useState(new Date());
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -102,34 +100,8 @@ function App() {
     setJoinedMarks,
   });
 
-  /**
-   * 現在時刻を1分ごとに更新する。
-   *
-   * 役割：
-   * - now を更新し、ScheduleTable の「現在行」表示を動かす
-   */
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(new Date());
-    }, 60000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  /**
-   * 表示用スケジュールを作成。
-   *
-   * 計算処理は
-   * scheduleBuilder.ts
-   * 側で行う。
-   */
-  const visibleTables = groups
-    .filter((group) => !group.hidden)
-    .map((group) => ({
-      ...group,
-      rows: buildSchedule(group.spotCount, group.inputs, is24Hour),
-    }));
-
+  const now = useNow();
+  const visibleTables = useVisibleTables(groups, is24Hour);
 
   return (
     <>
