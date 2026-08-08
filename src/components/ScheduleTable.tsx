@@ -25,6 +25,7 @@ import type { ScheduleRow, SpotGroup, JoinedMark } from "../types";
 
 import "./ScheduleTable.css";
 import { useEffect, useRef } from "react";
+import React from "react";
 import { timeToMinutes } from "../utils/time";
 
 /**
@@ -242,7 +243,7 @@ export default function ScheduleTable({
           (row && isJoinTargetRow(row.time) ? " join-target-row" : "");
 
         return (
-          <>
+          <React.Fragment key={rowIndex}>
             {/* 時刻セル */}
             <div
               ref={(el) => {
@@ -286,7 +287,7 @@ export default function ScheduleTable({
                 </div>
               )),
             )}
-          </>
+          </React.Fragment>
         );
       })}
     </div>
