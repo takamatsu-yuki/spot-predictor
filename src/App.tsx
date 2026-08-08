@@ -31,10 +31,10 @@ import { useEffect, useState } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import { buildSchedule } from "./utils/scheduleBuilder";
 import type { SpotGroup, JoinedMark } from "./types";
-import { resizeSpotNames } from "./utils/spotNames";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { useDateReset } from "./hooks/useDateReset";
+import { useGroups } from "./hooks/useGroups";
 
 function App() {
   // イベントグループ一覧
@@ -85,6 +85,23 @@ function App() {
     is24Hour,
   });
 
+  const {
+    handleCellClick,
+    handleSpotNameChange,
+    handleResetSpot,
+    handleAddGroup,
+    handleGroupNameChange,
+    handleSpotCountChange,
+    handleDeleteGroup,
+    handleResetAll,
+    handleToggleJoined,
+    handleVisibleChange,
+  } = useGroups({
+    groups,
+    setGroups,
+    setJoinedMarks,
+  });
+
   /**
    * 現在時刻を1分ごとに更新する。
    *
@@ -113,186 +130,6 @@ function App() {
       rows: buildSchedule(group.spotCount, group.inputs, is24Hour),
     }));
 
-  /**
-   * 表セルクリック時。
-   *
-   * 同じSpotが既に存在する場合、
-   * 新しい入力を正とする。
-   */
-  function handleCellClick(groupId: string, time: string, spotIndex: number) {
-    const spotNumber = spotIndex + 1;
-
-    setGroups((oldGroups) =>
-      oldGroups.map((group) => {
-        if (group.id !== groupId) {
-          return group;
-        }
-
-        // このSpotは既に登録済み？
-        const existing = group.inputs.find(
-          (input) => input.spot === spotNumber,
-        );
-
-        // 別の時刻なら無視
-        if (existing && existing.time !== time) {
-          return group;
-        }
-
-        return {
-          ...group,
-          inputs: [
-            ...group.inputs.filter((input) => input.time !== time),
-            {
-              spot: spotNumber,
-              time,
-            },
-          ],
-        };
-      }),
-    );
-  }
-
-  function handleSpotNameChange(groupId: string, index: number, name: string) {
-    setGroups((oldGroups) =>
-      oldGroups.map((group) => {
-        if (group.id !== groupId) {
-          return group;
-        }
-
-        return {
-          ...group,
-          spotNames: group.spotNames.map((oldName, i) =>
-            i === index ? name : oldName,
-          ),
-        };
-      }),
-    );
-  }
-
-  function handleResetSpot(groupId: string, spotIndex: number) {
-    const spotNumber = spotIndex + 1;
-
-    setGroups((oldGroups) =>
-      oldGroups.map((group) => {
-        if (group.id !== groupId) {
-          return group;
-        }
-
-        return {
-          ...group,
-          inputs: group.inputs.filter((input) => input.spot !== spotNumber),
-        };
-      }),
-    );
-  }
-
-  function handleAddGroup() {
-    setGroups((oldGroups) => {
-      const nextNumber = oldGroups.length + 1;
-
-      return [
-        ...oldGroups,
-        {
-          id: crypto.randomUUID(),
-          name: `イベント${nextNumber}`,
-          spotCount: 5,
-          spotNames: ["Spot1", "Spot2", "Spot3", "Spot4", "Spot5"],
-          inputs: [],
-          hidden: false,
-        },
-      ];
-    });
-  }
-
-  function handleGroupNameChange(groupId: string, name: string) {
-    setGroups((oldGroups) =>
-      oldGroups.map((group) =>
-        group.id === groupId ? { ...group, name } : group,
-      ),
-    );
-  }
-
-  function handleSpotCountChange(groupId: string, value: number) {
-    const spotCount = Math.max(1, Math.floor(value));
-
-    setGroups((oldGroups) =>
-      oldGroups.map((group) => {
-        if (group.id !== groupId || group.spotCount === spotCount) {
-          return group;
-        }
-
-        return {
-          ...group,
-          spotCount,
-          spotNames: resizeSpotNames(group.spotNames, spotCount),
-          inputs: [],
-        };
-      }),
-    );
-
-    // Spot数変更時は参加履歴もリセット
-    setJoinedMarks([]);
-  }
-
-  function handleDeleteGroup(groupId: string) {
-    if (groups.length <= 1) {
-      alert("最後の1グループは削除できません。");
-      return;
-    }
-
-    if (!confirm("このグループを削除しますか？")) {
-      return;
-    }
-
-    setGroups((oldGroups) => oldGroups.filter((group) => group.id !== groupId));
-  }
-
-  function handleResetAll() {
-    if (!confirm("全グループの観測データをリセットしますか？")) {
-      return;
-    }
-
-    setGroups((oldGroups) =>
-      oldGroups.map((group) => ({
-        ...group,
-        inputs: [],
-      })),
-    );
-
-    setJoinedMarks([]);
-  }
-
-  function handleToggleJoined(time: string) {
-    setJoinedMarks((old) => {
-      const exists = old.some((mark) => mark.time === time);
-
-      // 同じ時刻なら参加記録を削除
-      if (exists) {
-        return old.filter((mark) => mark.time !== time);
-      }
-
-      // 時刻単位で参加記録を追加
-      return [
-        ...old,
-        {
-          time,
-        },
-      ];
-    });
-  }
-
-  function handleVisibleChange(groupId: string, visible: boolean) {
-    setGroups((old) =>
-      old.map((group) =>
-        group.id === groupId
-          ? {
-              ...group,
-              hidden: !visible,
-            }
-          : group,
-      ),
-    );
-  }
 
   return (
     <>
