@@ -27,15 +27,14 @@
  * が担当する。
  */
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import { buildSchedule } from "./utils/scheduleBuilder";
-import { saveData, loadData } from "./utils/storage";
 import type { SpotGroup, JoinedMark } from "./types";
 import { resizeSpotNames } from "./utils/spotNames";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-// import AreaSettings from "./components/AreaSettings";
+import { useDateReset } from "./hooks/useDateReset";
 
 function App() {
   // イベントグループ一覧
@@ -73,97 +72,18 @@ function App() {
     Record<string, string>
   >({});
 
-  /**
-   * 起動時に保存データを復元する。
-   *
-   * Strict Mode では useEffect が2回実行されるため、
-   * didInit.current により「1回だけ」実行されるようにする。
-   *
-   * 役割：
-   * - localStorage からデータを読み込む
-   * - groups / is24Hour / joinedMarks / lastResetDate を復元する
-   * - loaded を true にする（復元完了）
-   */
-  const didInit = useRef(false);
-
-  useEffect(() => {
-    if (didInit.current) return;
-    didInit.current = true;
-
-    const data = loadData();
-
-    if (data && Array.isArray(data.groups)) {
-      setGroups(data.groups);
-      setIs24Hour(data.is24Hour ?? false);
-      setJoinedMarks(data.joinedMarks ?? []);
-      setLastResetDate(data.lastResetDate ?? "");
-    }
-
-    setLoaded(true);
-  }, []);
-
-  /**
-   * 復元完了後に「日付が変わったか」をチェックする。
-   *
-   * 役割：
-   * - lastResetDate が空なら今日で初期化（初回起動）
-   * - lastResetDate と今日の日付が違えば通知を出す
-   * - OKなら全グループの観測データをリセット
-   * - OK/Cancel に関わらず lastResetDate を今日に更新
-   *
-   * ※ 起動時 useEffect と分離することで、
-   *   Strict Mode の二重実行による「通知2回問題」を完全に防ぐ。
-   */
-  useEffect(() => {
-    if (!loaded) return;
-
-    const today = new Date().toISOString().slice(0, 10);
-
-    if (!lastResetDate) {
-      // 初回起動 → 今日で初期化
-      setLastResetDate(today);
-      return;
-    }
-
-    if (lastResetDate !== today) {
-      const ok = confirm(
-        "日付が変わりました。全エリアの観測データをリセットしますか？",
-      );
-
-      if (ok) {
-        setGroups((old) =>
-          old.map((group) => ({
-            ...group,
-            inputs: [],
-          })),
-        );
-        setJoinedMarks([]);
-      }
-
-      setLastResetDate(today);
-    }
-  }, [loaded]);
-
-  /**
-   * 状態変更時に保存する。
-   */
-  /**
-   * 状態変更時に保存する。
-   *
-   * 役割：
-   * - groups / is24Hour / joinedMarks / lastResetDate が変わるたびに保存
-   * - loaded が false の間は保存しない（復元中の上書きを防ぐ）
-   */
-  useEffect(() => {
-    if (!loaded) return;
-
-    saveData({
-      groups,
-      is24Hour,
-      joinedMarks,
-      lastResetDate,
-    });
-  }, [loaded, groups, is24Hour, joinedMarks, lastResetDate]);
+  // ① 日付リセットロジック（カスタムフック）
+  useDateReset({
+    groups,
+    setGroups,
+    joinedMarks,
+    setJoinedMarks,
+    lastResetDate,
+    setLastResetDate,
+    loaded,
+    setLoaded,
+    is24Hour,
+  });
 
   /**
    * 現在時刻を1分ごとに更新する。
