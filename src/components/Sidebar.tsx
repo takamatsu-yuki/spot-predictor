@@ -15,6 +15,7 @@
  * が担当する。
  */
 
+import { useState } from "react";
 import "./Sidebar.css";
 import AreaSettings from "./AreaSettings";
 import type { SpotGroup } from "../types";
@@ -39,6 +40,7 @@ type Props = {
   onVisibleChange: (groupId: string, visible: boolean) => void;
   onDeleteGroup: (groupId: string) => void;
   onAddGroup: () => void;
+  onReverseCooldown: (remainingMinutes: number) => void;
 };
 
 export default function Sidebar({
@@ -56,7 +58,9 @@ export default function Sidebar({
   onVisibleChange,
   onDeleteGroup,
   onAddGroup,
+  onReverseCooldown,
 }: Props) {
+  const [remainingCooldown, setRemainingCooldown] = useState("");
   return (
     <>
       {/* サイドバーの外側を覆う背景 */}
@@ -90,6 +94,35 @@ export default function Sidebar({
             </label>
 
             <button onClick={handleResetAll}>全スポット入力リセット</button>
+          </div>
+
+          <div className="cooldown-box">
+            <h3>クールタイム逆算</h3>
+
+            <label>残りクールタイム（分）</label>
+            <input
+              type="number"
+              value={remainingCooldown}
+              onChange={(e) => setRemainingCooldown(e.target.value)}
+              placeholder="例: 90"
+            />
+
+            <button
+              onClick={() => {
+                const minutes = Number(remainingCooldown);
+                if (isNaN(minutes) || minutes <= 0) {
+                  alert("正しい分数を入力してください");
+                  return;
+                }
+
+                // App.tsx から渡される逆算ハンドラ
+                onReverseCooldown(minutes);
+
+                setRemainingCooldown("");
+              }}
+            >
+              逆算して登録
+            </button>
           </div>
 
           {/* エリア管理 */}

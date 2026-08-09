@@ -18,6 +18,11 @@
 
 import { resizeSpotNames } from "../utils/spotNames";
 import type { SpotGroup, JoinedMark } from "../types";
+import {
+  reverseCooldown,
+  roundTo25Minutes,
+  snapToGroupRow,
+} from "../utils/timeHelpers";
 
 type Params = {
   groups: SpotGroup[];
@@ -25,11 +30,7 @@ type Params = {
   setJoinedMarks: React.Dispatch<React.SetStateAction<JoinedMark[]>>;
 };
 
-export function useGroups({
-  groups,
-  setGroups,
-  setJoinedMarks,
-}: Params) {
+export function useGroups({ groups, setGroups, setJoinedMarks }: Params) {
   /**
    * セルクリック（Spot入力）
    *
@@ -203,6 +204,21 @@ export function useGroups({
     );
   }
 
+  function handleReverseCooldown(
+    now: Date,
+    remainingMinutes: number,
+    rows: string[],
+  ) {
+    const raw = reverseCooldown(now, remainingMinutes);
+    const rounded = roundTo25Minutes(raw);
+    const snapped = snapToGroupRow(rounded, rows);
+
+    setJoinedMarks((old) => {
+      if (old.some((m) => m.time === snapped)) return old;
+      return [...old, { time: snapped }];
+    });
+  }
+
   return {
     handleCellClick,
     handleSpotNameChange,
@@ -214,5 +230,6 @@ export function useGroups({
     handleResetAll,
     handleToggleJoined,
     handleVisibleChange,
+    handleReverseCooldown,
   };
 }

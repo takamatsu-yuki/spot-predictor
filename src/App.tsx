@@ -94,6 +94,7 @@ function App() {
     handleResetAll,
     handleToggleJoined,
     handleVisibleChange,
+    handleReverseCooldown,
   } = useGroups({
     groups,
     setGroups,
@@ -122,6 +123,10 @@ function App() {
         onVisibleChange={handleVisibleChange}
         onDeleteGroup={handleDeleteGroup}
         onAddGroup={handleAddGroup}
+        onReverseCooldown={(remainingMinutes: number) => {
+          const rows = visibleTables[0].rows.map((r) => r.time);
+          handleReverseCooldown(now, remainingMinutes, rows);
+        }}
       />
 
       <ScheduleTable
