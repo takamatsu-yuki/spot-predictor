@@ -40,8 +40,29 @@ type Props = {
   onVisibleChange: (groupId: string, visible: boolean) => void;
   onDeleteGroup: (groupId: string) => void;
   onAddGroup: () => void;
-  onReverseCooldown: (remainingMinutes: number) => void;
+
+  // 逆算結果を返すようにする
+  onReverseCooldown: (remainingMinutes: number) => {
+    raw: string;
+    rounded: string;
+    snapped: string;
+  } | void;
 };
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="sidebar-section">
+      <h3 className="sidebar-section-title">{title}</h3>
+      {children}
+    </div>
+  );
+}
 
 export default function Sidebar({
   open,
@@ -61,6 +82,8 @@ export default function Sidebar({
   onReverseCooldown,
 }: Props) {
   const [remainingCooldown, setRemainingCooldown] = useState("");
+  const [reverseResult, setReverseResult] = useState<string | null>(null);
+
   return (
     <>
       {/* サイドバーの外側を覆う背景 */}
@@ -74,16 +97,15 @@ export default function Sidebar({
         {/* 固定ヘッダー */}
         <div className="sidebar-header">
           <h2>メニュー</h2>
-
           <button type="button" className="sidebar-close" onClick={onClose}>
             ×
           </button>
         </div>
 
-        {/* ↓ここからスクロールする中身 */}
+        {/* スクロール領域 */}
         <div className="sidebar-content">
           {/* 全体設定 */}
-          <div className="sidebar-global-settings">
+          <Section title="全体設定">
             <label className="event-options">
               <input
                 type="checkbox"
@@ -94,11 +116,10 @@ export default function Sidebar({
             </label>
 
             <button onClick={handleResetAll}>全スポット入力リセット</button>
-          </div>
+          </Section>
 
-          <div className="cooldown-box">
-            <h3>クールタイム逆算</h3>
-
+          {/* クールタイム逆算 */}
+          <Section title="クールタイム逆算">
             <label>残りクールタイム（分）</label>
             <input
               type="number"
@@ -115,30 +136,40 @@ export default function Sidebar({
                   return;
                 }
 
-                // App.tsx から渡される逆算ハンドラ
-                onReverseCooldown(minutes);
+                const result = onReverseCooldown(minutes);
+
+                if (result) {
+                  setReverseResult(
+                    `逆算: ${result.raw} → 切り捨て: ${result.rounded} → 行: ${result.snapped}`,
+                  );
+                }
 
                 setRemainingCooldown("");
               }}
             >
               逆算して登録
             </button>
-          </div>
+
+            {reverseResult && (
+              <div className="reverse-result">{reverseResult}</div>
+            )}
+          </Section>
 
           {/* エリア管理 */}
-          <Accordion title="エリア管理">
-            <AreaSettings
-              groups={groups}
-              spotCountDrafts={spotCountDrafts}
-              setSpotCountDrafts={setSpotCountDrafts}
-              onSpotCountChange={onSpotCountChange}
-              onVisibleChange={onVisibleChange}
-              onDeleteGroup={onDeleteGroup}
-              onAddGroup={onAddGroup}
-            />
-          </Accordion>
+          <Section title="エリア管理">
+            <Accordion title="エリア一覧">
+              <AreaSettings
+                groups={groups}
+                spotCountDrafts={spotCountDrafts}
+                setSpotCountDrafts={setSpotCountDrafts}
+                onSpotCountChange={onSpotCountChange}
+                onVisibleChange={onVisibleChange}
+                onDeleteGroup={onDeleteGroup}
+                onAddGroup={onAddGroup}
+              />
+            </Accordion>
+          </Section>
         </div>
-        {/* ↑ここまでスクロールする中身 */}
       </aside>
     </>
   );
