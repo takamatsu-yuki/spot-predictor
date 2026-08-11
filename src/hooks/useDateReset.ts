@@ -77,7 +77,7 @@ export function useDateReset({
   useEffect(() => {
     if (!loaded) return;
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString("ja-JP");
 
     if (!lastResetDate) {
       // 初回起動 → 今日で初期化
