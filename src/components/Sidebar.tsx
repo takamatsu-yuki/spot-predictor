@@ -41,12 +41,15 @@ type Props = {
   onDeleteGroup: (groupId: string) => void;
   onAddGroup: () => void;
 
-  // 逆算結果を返すようにする
-  onReverseCooldown: (remainingMinutes: number) => {
+  reversePreview: {
     raw: string;
     rounded: string;
     snapped: string;
-  } | void;
+  } | null;
+
+  onReverseImmediate: (minutes: number) => void;
+  onReverseCalculate: (minutes: number) => void;
+  onReverseRegister: () => void;
 };
 
 function Section({
@@ -79,10 +82,12 @@ export default function Sidebar({
   onVisibleChange,
   onDeleteGroup,
   onAddGroup,
-  onReverseCooldown,
+  reversePreview,
+  onReverseImmediate,
+  onReverseCalculate,
+  onReverseRegister,
 }: Props) {
   const [remainingCooldown, setRemainingCooldown] = useState("");
-  const [reverseResult, setReverseResult] = useState<string | null>(null);
 
   return (
     <>
@@ -128,30 +133,42 @@ export default function Sidebar({
               placeholder="例: 90"
             />
 
+            {/* ボタン1：即時登録 */}
             <button
               onClick={() => {
-                const minutes = Number(remainingCooldown);
-                if (isNaN(minutes) || minutes <= 0) {
-                  alert("正しい分数を入力してください");
-                  return;
-                }
-
-                const result = onReverseCooldown(minutes);
-
-                if (result) {
-                  setReverseResult(
-                    `逆算: ${result.raw} → 切り捨て: ${result.rounded} → 行: ${result.snapped}`,
-                  );
-                }
-
+                onReverseImmediate(Number(remainingCooldown));
+                // 登録後に入力を消す
                 setRemainingCooldown("");
               }}
             >
-              逆算して登録
+              即時登録
             </button>
 
-            {reverseResult && (
-              <div className="reverse-result">{reverseResult}</div>
+            {/* ボタン2：計算だけ */}
+            <button
+              onClick={() => onReverseCalculate(Number(remainingCooldown))}
+            >
+              計算する
+            </button>
+
+            {/* ボタン3：計算結果を登録 */}
+            <button
+              disabled={!reversePreview}
+              onClick={() => {
+                onReverseRegister();
+                // 登録後に入力を消す
+                setRemainingCooldown("");
+              }}
+            >
+              計算結果を登録
+            </button>
+
+            {/* 計算結果の表示 */}
+            {reversePreview && (
+              <div className="reverse-result">
+                逆算: {reversePreview.raw} ⇒ 参加時刻列:{" "}
+                {reversePreview.snapped}
+              </div>
             )}
           </Section>
 
