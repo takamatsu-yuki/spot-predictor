@@ -36,6 +36,7 @@ import { useDateReset } from "./hooks/useDateReset";
 import { useGroups } from "./hooks/useGroups";
 import { useNow } from "./hooks/useNow";
 import { useVisibleTables } from "./hooks/useVisibleTables";
+import { useReverseCooldown } from "./hooks/useReverseCooldown";
 
 function App() {
   // イベントグループ一覧
@@ -49,6 +50,15 @@ function App() {
       hidden: false,
     },
   ]);
+
+  /*
+    Spot数入力欄で、入力途中の文字列を保持する。
+    例: 「6」を入力する途中で、一時的に空欄にできる。
+  */
+  const [spotCountDrafts, setSpotCountDrafts] = useState<
+    Record<string, string>
+  >({});
+
   // 全グループ共通設定
   const [is24Hour, setIs24Hour] = useState(false);
 
@@ -62,13 +72,11 @@ function App() {
 
   const [lastResetDate, setLastResetDate] = useState("");
 
-  /*
-    Spot数入力欄で、入力途中の文字列を保持する。
-    例: 「6」を入力する途中で、一時的に空欄にできる。
-  */
-  const [spotCountDrafts, setSpotCountDrafts] = useState<
-    Record<string, string>
-  >({});
+  const visibleTables = useVisibleTables(groups, is24Hour);
+  const rows = visibleTables[0].rows.map((r) => r.time);
+
+  const { preview, registerImmediate, calculateOnly, registerPreview } =
+    useReverseCooldown(rows);
 
   // ① 日付リセットロジック（カスタムフック）
   useDateReset({
@@ -94,7 +102,6 @@ function App() {
     handleResetAll,
     handleToggleJoined,
     handleVisibleChange,
-    handleReverseCooldown,
   } = useGroups({
     groups,
     setGroups,
@@ -102,7 +109,6 @@ function App() {
   });
 
   const now = useNow();
-  const visibleTables = useVisibleTables(groups, is24Hour);
 
   return (
     <>
@@ -123,10 +129,16 @@ function App() {
         onVisibleChange={handleVisibleChange}
         onDeleteGroup={handleDeleteGroup}
         onAddGroup={handleAddGroup}
-        onReverseCooldown={(remainingMinutes: number) => {
-          const rows = visibleTables[0].rows.map((r) => r.time);
-          handleReverseCooldown(now, remainingMinutes, rows);
-        }}
+        reversePreview={preview}
+        onReverseImmediate={(minutes) =>
+          registerImmediate(now, minutes, (snapped) =>
+            handleToggleJoined(snapped),
+          )
+        }
+        onReverseCalculate={(minutes) => calculateOnly(now, minutes)}
+        onReverseRegister={() =>
+          registerPreview((snapped) => handleToggleJoined(snapped))
+        }
       />
 
       <ScheduleTable
