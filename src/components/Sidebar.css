@@ -199,7 +199,6 @@
   opacity: 1;
 }
 
-
 .reverse-result {
   margin-top: 10px;
   padding: 10px 12px;
@@ -217,4 +216,49 @@
   align-items: center;
   gap: 10px; /* ラベルと入力欄の間の余白 */
   margin-bottom: 12px;
+}
+
+.section-info-wrapper {
+  position: relative; /* Tooltip の基準 */
+  display: inline-flex;
+  align-items: center;
+}
+
+.section-info-icon {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.section-info-icon:hover {
+  opacity: 1;
+}
+
+/* Tooltip 本体 */
+.section-tooltip {
+  position: absolute;
+  top: 20px; /* アイコンの下に表示 */
+  left: 0;
+  background: var(--surface-hover-bg);
+  color: var(--surface-text);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 1000;
+  border: 1px solid var(--border);
+}
+
+/* PC の hover */
+.section-info-wrapper:hover .section-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* iPhone の tap */
+.section-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
 }

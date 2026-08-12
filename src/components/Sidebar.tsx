@@ -62,16 +62,27 @@ function Section({
   info?: string;
   children: React.ReactNode;
 }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+
   return (
     <div className="sidebar-section">
       <div className="sidebar-section-header">
         <h3 className="sidebar-section-title">{title}</h3>
+
         {info && (
-          <span className="sidebar-section-info" title={info}>
-            ℹ️
-          </span>
+          <div
+            className="section-info-wrapper"
+            onClick={() => setShowTooltip(!showTooltip)}
+          >
+            <span className="section-info-icon">ℹ️</span>
+
+            <div className={`section-tooltip ${showTooltip ? "visible" : ""}`}>
+              {info}
+            </div>
+          </div>
         )}
       </div>
+
       {children}
     </div>
   );
@@ -137,7 +148,6 @@ export default function Sidebar({
           <Section
             title="クールタイム逆算"
             info="例: 90、1:30、1h30m、1時間30分、1時間半"
-
           >
             <div className="cooldown-field">
               <label>残りクールタイム</label>
