@@ -20,6 +20,7 @@ import "./Sidebar.css";
 import AreaSettings from "./AreaSettings";
 import type { SpotGroup } from "../types";
 import Accordion from "./Accordion";
+import { parseCooldownInput } from "../utils/timeHelpers";
 
 type Props = {
   open: boolean;
@@ -127,7 +128,7 @@ export default function Sidebar({
           <Section title="クールタイム逆算">
             <label>残りクールタイム（分）</label>
             <input
-              type="number"
+              type="text"
               value={remainingCooldown}
               onChange={(e) => setRemainingCooldown(e.target.value)}
               placeholder="例: 90"
@@ -136,7 +137,16 @@ export default function Sidebar({
             {/* ボタン1：即時登録 */}
             <button
               onClick={() => {
-                onReverseImmediate(Number(remainingCooldown));
+                const minutes = parseCooldownInput(remainingCooldown);
+
+                if (minutes === null) {
+                  alert(
+                    "入力形式が正しくありません（例: 90, 1:30, 1h30m, 1時間30分）",
+                  );
+                  return;
+                }
+
+                onReverseImmediate(minutes);
                 // 登録後に入力を消す
                 setRemainingCooldown("");
               }}
@@ -146,7 +156,18 @@ export default function Sidebar({
 
             {/* ボタン2：計算だけ */}
             <button
-              onClick={() => onReverseCalculate(Number(remainingCooldown))}
+              onClick={() => {
+                const minutes = parseCooldownInput(remainingCooldown);
+
+                if (minutes === null) {
+                  alert(
+                    "入力形式が正しくありません（例: 90, 1:30, 1h30m, 1時間30分）",
+                  );
+                  return;
+                }
+
+                onReverseCalculate(minutes);
+              }}
             >
               計算する
             </button>

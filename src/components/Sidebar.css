@@ -194,3 +194,10 @@
   color: var(--surface-text);
   font-size: 13px;
 }
+
+.cooldown-field {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* ラベルと入力欄の間の余白 */
+  margin-bottom: 12px;
+}
