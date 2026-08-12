@@ -183,6 +183,23 @@
   cursor: pointer;
 }
 
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-section-info {
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.sidebar-section-info:hover {
+  opacity: 1;
+}
+
+
 .reverse-result {
   margin-top: 10px;
   padding: 10px 12px;

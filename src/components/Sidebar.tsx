@@ -55,14 +55,23 @@ type Props = {
 
 function Section({
   title,
+  info,
   children,
 }: {
   title: string;
+  info?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="sidebar-section">
-      <h3 className="sidebar-section-title">{title}</h3>
+      <div className="sidebar-section-header">
+        <h3 className="sidebar-section-title">{title}</h3>
+        {info && (
+          <span className="sidebar-section-info" title={info}>
+            ℹ️
+          </span>
+        )}
+      </div>
       {children}
     </div>
   );
@@ -125,14 +134,20 @@ export default function Sidebar({
           </Section>
 
           {/* クールタイム逆算 */}
-          <Section title="クールタイム逆算">
-            <label>残りクールタイム（分）</label>
-            <input
-              type="text"
-              value={remainingCooldown}
-              onChange={(e) => setRemainingCooldown(e.target.value)}
-              placeholder="例: 90"
-            />
+          <Section
+            title="クールタイム逆算"
+            info="例: 90、1:30、1h30m、1時間30分、1時間半"
+
+          >
+            <div className="cooldown-field">
+              <label>残りクールタイム</label>
+              <input
+                type="text"
+                value={remainingCooldown}
+                onChange={(e) => setRemainingCooldown(e.target.value)}
+                placeholder="例: 90 / 1:30 / 1時間30分"
+              />
+            </div>
 
             {/* ボタン1：即時登録 */}
             <button
