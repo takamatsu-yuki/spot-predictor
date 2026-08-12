@@ -65,14 +65,22 @@ function Section({
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <div className="sidebar-section">
+    <div
+      className="sidebar-section"
+      onClick={() => {
+        if (showTooltip) setShowTooltip(false);
+      }}
+    >
       <div className="sidebar-section-header">
         <h3 className="sidebar-section-title">{title}</h3>
 
         {info && (
           <div
             className="section-info-wrapper"
-            onClick={() => setShowTooltip(!showTooltip)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltip(!showTooltip);
+            }}
           >
             <span className="section-info-icon">ℹ️</span>
 
