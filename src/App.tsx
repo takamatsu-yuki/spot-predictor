@@ -151,7 +151,7 @@ function App() {
         onResetSpot={handleResetSpot}
         onGroupNameChange={handleGroupNameChange}
       />
-      <footer>ver 0.3.0</footer>
+      <footer>ver 0.4.0</footer>
     </>
   );
 }
