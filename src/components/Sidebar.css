@@ -38,7 +38,7 @@
   position: fixed;
 
   top: 0;
-  right: -320px;
+  right: 0;
 
   width: 320px;
   height: 100dvh;
@@ -56,6 +56,8 @@
   color: var(--surface-text);
 
   transition: right 0.25s ease;
+  transform: translateX(320px);
+  transition: transform 0.25s ease;
 
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
 
@@ -80,7 +82,7 @@
 
 /* サイドバー表示 */
 .sidebar.open {
-  right: 0;
+  transform: translateX(0);
 }
 
 /*
