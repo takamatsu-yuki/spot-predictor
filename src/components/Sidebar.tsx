@@ -144,7 +144,11 @@ export default function Sidebar({
               <input
                 type="checkbox"
                 checked={is24Hour}
-                onChange={(e) => setIs24Hour(e.target.checked)}
+                onChange={(e) => {
+                  const v = e.target.checked;
+                  setIs24Hour(v);
+                  localStorage.setItem("is24Hour", JSON.stringify(v));
+                }}
               />
               24時間開催イベント中
             </label>

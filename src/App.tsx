@@ -60,7 +60,10 @@ function App() {
   >({});
 
   // 全グループ共通設定
-  const [is24Hour, setIs24Hour] = useState(false);
+  const saved24 = localStorage.getItem("is24Hour");
+  const initial24 = saved24 ? JSON.parse(saved24) : false;
+  const [is24Hour, setIs24Hour] = useState(initial24);
+
 
   // ★マーク一覧
   const [joinedMarks, setJoinedMarks] = useState<JoinedMark[]>([]);
